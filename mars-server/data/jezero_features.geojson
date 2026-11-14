@@ -1,0 +1,152 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:IAU:2015:49900"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "butler-landing",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.4508, 18.4447, -2564.2]
+      },
+      "properties": {
+        "name": "Octavia E. Butler Landing Site",
+        "category": "base_camp",
+        "mission": "NASA Mars 2020 Perseverance",
+        "instrument": "Landing Radar / Navcam",
+        "sol": 1,
+        "elevation_m": -2564.2,
+        "significance": "Touchdown site of the Mars 2020 Perseverance rover on February 18, 2021. Primary base of operations.",
+        "pds_url": "https://pds-geosciences.wustl.edu/missions/m2020/",
+        "icon": "rover-base"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "three-forks",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.4410, 18.4550, -2550.0]
+      },
+      "properties": {
+        "name": "Three Forks Sample Depot",
+        "category": "science_target",
+        "mission": "NASA Mars 2020 Perseverance",
+        "instrument": "Mastcam-Z / PIXL / SHERLOC",
+        "sol": 650,
+        "elevation_m": -2550.0,
+        "significance": "Backup sample tube cache location deposited by Perseverance on the Jezero delta bottomset beds.",
+        "pds_url": "https://mars.nasa.gov/mars2020/",
+        "icon": "sample-cache"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "hawksbill-gap",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.4280, 18.4600, -2490.0]
+      },
+      "properties": {
+        "name": "Hawksbill Gap Delta Scarp Breach",
+        "category": "science_target",
+        "mission": "NASA Mars 2020 Perseverance",
+        "instrument": "SuperCam / RIMFAX",
+        "sol": 510,
+        "elevation_m": -2490.0,
+        "significance": "Natural gentle ascent ramp allowing traversal from the crater floor up onto the delta topset.",
+        "pds_url": "https://pds-geosciences.wustl.edu/missions/m2020/",
+        "icon": "waypoint"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "neretva-carbonates",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.4165, 18.4685, -2415.8]
+      },
+      "properties": {
+        "name": "Neretva Margin Carbonate Unit",
+        "category": "science_target",
+        "mission": "MRO CRISM / Perseverance",
+        "instrument": "CRISM Targeted Spectrometer",
+        "sol": 880,
+        "elevation_m": -2415.8,
+        "significance": "Hydrated magnesium carbonate minerals precipitated along the ancient paleolake shoreline.",
+        "pds_url": "https://crism.jhuapl.edu/",
+        "icon": "mineral-sample"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kodiak-butte",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.4485, 18.4230, -2505.0]
+      },
+      "properties": {
+        "name": "Kodiak Butte Isolated Remnant",
+        "category": "science_target",
+        "mission": "NASA Mars 2020 Perseverance",
+        "instrument": "Mastcam-Z / SuperCam Long-Distance RMI",
+        "sol": 75,
+        "elevation_m": -2505.0,
+        "significance": "Erosional mesa exhibiting preserved bottomset, foreset, and topset deltaic strata.",
+        "pds_url": "https://mars.nasa.gov/mars2020/",
+        "icon": "mesa"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "seitah-dune-hazard-01",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.4420, 18.4350],
+            [77.4480, 18.4350],
+            [77.4470, 18.4270],
+            [77.4410, 18.4270],
+            [77.4420, 18.4350]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Séítah Sand Dune Ripple Hazard",
+        "category": "hazard_exclusion",
+        "hazard_type": "aeolian_sand_entrapment",
+        "severity": 1.0,
+        "warning": "Unconsolidated fine sand ripples prone to wheel entrapment. Hard exclusion barrier."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "coarse-mola-uncertainty-zone",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.4000, 18.4100],
+            [77.4100, 18.4100],
+            [77.4100, 18.4300],
+            [77.4000, 18.4300],
+            [77.4000, 18.4100]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Coarse MOLA Low-Confidence Boundary",
+        "category": "uncertainty_zone",
+        "hazard_type": "coarse_resolution_463m",
+        "severity": 0.8,
+        "warning": "Region outside high-resolution HiRISE coverage. Topography interpolated from 463m MOLA."
+      }
+    }
+  ]
+}

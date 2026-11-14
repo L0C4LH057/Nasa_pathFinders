@@ -1,0 +1,216 @@
+/* ==========================================================================
+   MARS PATHFINDER — Martian Dark Neomorphism Design System
+   Inspired by NASA JPL Mission Control & Tactile Neomorphic Glassmorphism
+   ========================================================================== */
+
+/* Scope mask override: eliminate circular vignette shadow completely */
+#scope-mask,
+#scope-mask canvas {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+:root {
+  /* Surface Palettes */
+  --neo-bg: #090c12;
+  --neo-card-bg: #111520;
+  --neo-card-elevated: #151a28;
+  --neo-card-sunken: #080a0f;
+  --neo-border: rgba(255, 255, 255, 0.07);
+  --neo-border-glow: rgba(0, 210, 255, 0.25);
+
+  /* Dual Soft Shadows (Extruded & Sunken) */
+  --neo-shadow-card:
+    -4px -4px 12px rgba(255, 255, 255, 0.03),
+     6px 6px 18px rgba(0, 0, 0, 0.75);
+
+  --neo-shadow-card-hover:
+    -5px -5px 14px rgba(255, 255, 255, 0.045),
+     8px 8px 22px rgba(0, 0, 0, 0.85);
+
+  --neo-shadow-inset:
+    inset 3px 3px 7px rgba(0, 0, 0, 0.8),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.03);
+
+  --neo-shadow-btn:
+    -2px -2px 6px rgba(255, 255, 255, 0.04),
+     4px 4px 10px rgba(0, 0, 0, 0.65);
+
+  --neo-shadow-btn-pressed:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.85),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.03);
+
+  /* Planetary Accents */
+  --neo-cyan: #00d2ff;
+  --neo-cyan-glow: 0 0 12px rgba(0, 210, 255, 0.5);
+  --neo-orange: #ff6b35;
+  --neo-orange-glow: 0 0 12px rgba(255, 107, 53, 0.5);
+  --neo-green: #10b981;
+  --neo-green-glow: 0 0 10px rgba(16, 185, 129, 0.4);
+  --neo-red: #ef4444;
+  --neo-red-glow: 0 0 10px rgba(239, 68, 68, 0.45);
+  --neo-purple: #a855f7;
+
+  /* Typography */
+  --neo-text-primary: #f8fafc;
+  --neo-text-secondary: #94a3b8;
+  --neo-text-muted: #64748b;
+  --neo-font-mono: 'JetBrains Mono', monospace;
+  --neo-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Base Card Class */
+.neo-card {
+  background: var(--neo-card-bg);
+  border: 1px solid var(--neo-border);
+  border-radius: 14px;
+  box-shadow: var(--neo-shadow-card);
+  backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.neo-card:hover {
+  box-shadow: var(--neo-shadow-card-hover);
+}
+
+.neo-card-inner {
+  padding: 16px 18px;
+}
+
+/* Sunken Cavity (e.g. for charts, inputs, gauges) */
+.neo-sunken {
+  background: var(--neo-card-sunken);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  box-shadow: var(--neo-shadow-inset);
+}
+
+/* Neomorphic Buttons */
+.neo-btn {
+  background: var(--neo-card-bg);
+  color: var(--neo-text-primary);
+  border: 1px solid var(--neo-border);
+  border-radius: 8px;
+  box-shadow: var(--neo-shadow-btn);
+  padding: 6px 14px;
+  font-family: var(--neo-font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.neo-btn:hover {
+  color: var(--neo-cyan);
+  border-color: rgba(0, 210, 255, 0.35);
+  box-shadow: -2px -2px 8px rgba(255, 255, 255, 0.05), 4px 4px 12px rgba(0, 0, 0, 0.75);
+}
+
+.neo-btn:active,
+.neo-btn.active {
+  box-shadow: var(--neo-shadow-btn-pressed);
+  color: var(--neo-cyan);
+  border-color: rgba(0, 210, 255, 0.4);
+  background: var(--neo-card-sunken);
+}
+
+.neo-btn-primary {
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 150, 220, 0.1) 100%);
+  border-color: rgba(0, 210, 255, 0.5);
+  color: var(--neo-cyan);
+}
+
+.neo-btn-primary:hover {
+  box-shadow: 0 0 14px rgba(0, 210, 255, 0.45);
+}
+
+/* Card Header */
+.neo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.neo-card-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--neo-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.neo-card-link {
+  font-size: 0.75rem;
+  color: var(--neo-cyan);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.neo-card-link:hover {
+  opacity: 0.8;
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.6);
+}
+
+/* Radial Gauge Styling */
+.radial-gauge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.radial-gauge-svg {
+  transform: rotate(-90deg);
+}
+
+.radial-gauge-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 8;
+}
+
+.radial-gauge-indicator {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease-in-out;
+}
+
+.radial-gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -58%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.radial-gauge-val {
+  font-family: var(--neo-font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--neo-text-primary);
+}
+
+.radial-gauge-unit {
+  font-size: 0.68rem;
+  color: var(--neo-text-muted);
+}
