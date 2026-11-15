@@ -1,0 +1,14 @@
+C:\Users\SM\Documents\GitHub\Nasa_pathFinders\mars-server\target\release\build\serde/3530638aa35b2868\out\serde-3530638aa35b2868.d: C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\lib.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\integer128.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\mod.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\de.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\ser.rs C:\Users\SM\Documents\GitHub\Nasa_pathFinders\mars-server\target\release\build\serde/0fbf761367982cc5\out/private.rs
+
+C:\Users\SM\Documents\GitHub\Nasa_pathFinders\mars-server\target\release\build\serde/3530638aa35b2868\out\libserde-3530638aa35b2868.rlib: C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\lib.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\integer128.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\mod.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\de.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\ser.rs C:\Users\SM\Documents\GitHub\Nasa_pathFinders\mars-server\target\release\build\serde/0fbf761367982cc5\out/private.rs
+
+C:\Users\SM\Documents\GitHub\Nasa_pathFinders\mars-server\target\release\build\serde/3530638aa35b2868\out\libserde-3530638aa35b2868.rmeta: C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\lib.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\integer128.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\mod.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\de.rs C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\ser.rs C:\Users\SM\Documents\GitHub\Nasa_pathFinders\mars-server\target\release\build\serde/0fbf761367982cc5\out/private.rs
+
+C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\lib.rs:
+C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\integer128.rs:
+C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\mod.rs:
+C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\de.rs:
+C:\Users\SM\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde-1.0.229\src\private\ser.rs:
+C:\Users\SM\Documents\GitHub\Nasa_pathFinders\mars-server\target\release\build\serde/0fbf761367982cc5\out/private.rs:
+
+# env-dep:OUT_DIR=C:\\Users\\SM\\Documents\\GitHub\\Nasa_pathFinders\\mars-server\\target\\release\\build\\serde/0fbf761367982cc5\\out

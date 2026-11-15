@@ -120,11 +120,11 @@ export class MarsController {
       const payload = {
         start,
         goal,
-        max_slope_deg: config.max_slope_deg ?? 18.0,
-        w_slope: config.w_slope ?? 3.5,
-        w_hazard: config.w_hazard ?? 6.0,
-        w_uncertainty: config.w_uncertainty ?? 4.0,
-        walk_speed_kmh: config.walk_speed_kmh ?? 2.4,
+        max_slope_deg: config.max_slope_deg ?? this.store.costModel.max_slope_deg,
+        w_slope: config.w_slope ?? this.store.costModel.w_slope,
+        w_hazard: config.w_hazard ?? this.store.costModel.w_hazard,
+        w_uncertainty: config.w_uncertainty ?? this.store.costModel.w_uncertainty,
+        walk_speed_kmh: config.walk_speed_kmh ?? this.store.costModel.walk_speed_kmh,
         o2_rate_lpm: config.o2_rate_lpm ?? 1.1,
         battery_wh_per_hr: config.battery_wh_per_hr ?? 130.0,
       };

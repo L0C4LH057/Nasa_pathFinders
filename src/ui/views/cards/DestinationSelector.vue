@@ -6,6 +6,7 @@ const store = useMarsStore();
 const isOpen = ref(false);
 
 function selectDestination(id) {
+  if (id !== 'jezero') return;
   store.setDestination(id);
   isOpen.value = false;
 }
@@ -41,12 +42,13 @@ function selectDestination(id) {
           v-for="d in store.destinations"
           :key="d.id"
           class="dest-item"
-          :class="{ active: store.selectedDestinationId === d.id }"
-          @click="selectDestination(d.id)"
+          :class="{ active: store.selectedDestinationId === d.id, disabled: d.id !== 'jezero' }"
+          @click="d.id === 'jezero' && selectDestination(d.id)"
+          :title="d.id === 'jezero' ? d.subtitle : `${d.subtitle} (Coming soon)`"
         >
           <div class="dest-item-main">
             <div class="dest-item-title">{{ d.name }}</div>
-            <div class="dest-item-sub">{{ d.subtitle }}</div>
+            <div class="dest-item-sub">{{ d.id === 'jezero' ? d.subtitle : `${d.subtitle} · Coming soon` }}</div>
           </div>
           <div class="dest-item-badge">{{ d.category }}</div>
         </div>
@@ -165,6 +167,16 @@ function selectDestination(id) {
 .dest-item.active {
   background: rgba(0, 210, 255, 0.14);
   border-color: rgba(0, 210, 255, 0.4);
+}
+
+.dest-item.disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.dest-item.disabled:hover {
+  background: transparent;
+  border-color: transparent;
 }
 
 .dest-item-main {

@@ -160,7 +160,7 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
     },
   });
 
-  // Pharmaceutical & Medical Inventory
+  // Pharmaceutical & Medical Inventory (FEFO)
   const pharmaInventory = ref({
     activeCategory: 'inventory', // 'inventory' | 'crew-health' | 'medical-kit'
     activeItem: {
@@ -172,7 +172,31 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
       minStockThreshold: 150,
     },
     belowStockCount: 2,
+    items: [
+      { name: 'Epinephrine 1mg/mL', batch: 'EPI-2024-009', expiry: '03/2026', inStock: 8, minStock: 12, status: 'Low Stock' },
+      { name: 'Silver Sulfadiazine 1%', batch: 'SSD-2024-088', expiry: '05/2026', inStock: 12, minStock: 15, status: 'Low Stock' },
+      { name: 'Dexamethasone 4mg', batch: 'DEX-2025-091', expiry: '11/2026', inStock: 45, minStock: 20, status: 'FEFO OK' },
+      { name: 'Amoxicillin 500mg', batch: 'AMX-2025-047', expiry: '12/2026', inStock: 120, minStock: 150, status: 'Low Stock' },
+      { name: 'Ibuprofen 400mg', batch: 'IBU-2025-012', expiry: '08/2027', inStock: 350, minStock: 100, status: 'FEFO OK' },
+    ],
+    medicalKit: [
+      { name: 'EVA Trauma Dressing Kit', qty: '4 packs', status: 'Ready' },
+      { name: 'Epinephrine Auto-Injector', qty: '8 units', status: 'Exp 03/2026' },
+      { name: 'Broad-Spectrum IV Pack', qty: '2 kits', status: 'Sealed' },
+    ],
   });
+
+  // Pathfinding Cost Model Parameters (synchronized with mars-server RouteRequest)
+  const costModel = ref({
+    max_slope_deg: 18.0,
+    w_slope: 3.5,
+    w_hazard: 6.0,
+    w_uncertainty: 4.0,
+    walk_speed_kmh: 2.4,
+  });
+
+  // Active Life-Support What-If Scenario
+  const activeLifeSupportScenario = ref('nominal');
 
   // Featured Science Target
   const scienceTarget = ref({
@@ -297,6 +321,115 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
     activeTab.value = tab;
   }
 
+  function updateCostModel(patch) {
+    costModel.value = { ...costModel.value, ...patch };
+  }
+
+  function setLifeSupportScenario(scenario) {
+    activeLifeSupportScenario.value = scenario;
+    const now = new Date().toTimeString().slice(0, 5);
+    if (scenario === 'nominal') {
+      lifeSupport.value = {
+        oxygen: { value: 78, max: 100, unit: '%', subtext: '~ 48 hrs remaining', status: 'Normal', statusType: 'normal' },
+        co2: { value: 1.4, max: 5, unit: '%', subtext: '(≤ 3%)', status: 'Normal', statusType: 'normal' },
+        water: { value: 72, max: 100, unit: '%', subtext: '~ 6.0 days', status: 'Normal', statusType: 'normal' },
+        pressure: { value: 14.7, max: 20, unit: 'psia', subtext: '(5-15)', status: 'Normal', statusType: 'normal' },
+      };
+      alerts.value = [
+        {
+          id: 'alert-nominal',
+          title: 'All ECLSS Loops Nominal',
+          time: now,
+          severity: 'normal',
+          icon: 'air',
+          metric: 'O₂ 78% · CO₂ 1.4% · Water 72%',
+          action: 'Continue standard EVA schedule.',
+        },
+      ];
+    } else if (scenario === 'co2') {
+      lifeSupport.value = {
+        oxygen: { value: 62, max: 100, unit: '%', subtext: '~ 36 hrs remaining', status: 'Normal', statusType: 'normal' },
+        co2: { value: 3.8, max: 5, unit: '%', subtext: '(> 3% LIMIT)', status: 'Critical', statusType: 'critical' },
+        water: { value: 68, max: 100, unit: '%', subtext: '~ 5.5 days', status: 'Normal', statusType: 'normal' },
+        pressure: { value: 14.7, max: 20, unit: 'psia', subtext: '(5-15)', status: 'Normal', statusType: 'normal' },
+      };
+      alerts.value = [
+        {
+          id: 'alert-co2-scrubber',
+          title: 'CO₂ Scrubber Degraded',
+          time: now,
+          severity: 'critical',
+          icon: 'air',
+          metric: 'Cabin CO₂: 3.8% (Limit: ≤ 3.0%)',
+          action: 'Switch to backup LiOH canister.',
+        },
+        {
+          id: 'alert-temp',
+          title: 'Cabin Temperature Rising',
+          time: now,
+          severity: 'warning',
+          icon: 'thermometer',
+          metric: 'Current: 23°C (Limit: 18–22°C)',
+          action: 'Increase radiator loop flow.',
+        },
+      ];
+    } else if (scenario === 'leak') {
+      lifeSupport.value = {
+        oxygen: { value: 24, max: 100, unit: '%', subtext: '~ 9 hrs remaining', status: 'Critical', statusType: 'critical' },
+        co2: { value: 1.9, max: 5, unit: '%', subtext: '(≤ 3%)', status: 'Normal', statusType: 'normal' },
+        water: { value: 65, max: 100, unit: '%', subtext: '~ 5.2 days', status: 'Normal', statusType: 'normal' },
+        pressure: { value: 8.4, max: 20, unit: 'psia', subtext: '(DROPPING)', status: 'Critical', statusType: 'critical' },
+      };
+      alerts.value = [
+        {
+          id: 'alert-cabin-leak',
+          title: 'Cabin Pressure Drop Detected',
+          time: now,
+          severity: 'critical',
+          icon: 'air',
+          metric: 'Pressure: 8.4 psia (Nominal: 14.7)',
+          action: 'Seal Sector 3 bulkhead & don suits.',
+        },
+        {
+          id: 'alert-o2',
+          title: 'Oxygen Reserve Low',
+          time: now,
+          severity: 'critical',
+          icon: 'air',
+          metric: 'Remaining: 24% (Depleting)',
+          action: 'Engage emergency O₂ reserve.',
+        },
+      ];
+    } else if (scenario === 'water') {
+      lifeSupport.value = {
+        oxygen: { value: 62, max: 100, unit: '%', subtext: '~ 36 hrs remaining', status: 'Normal', statusType: 'normal' },
+        co2: { value: 1.8, max: 5, unit: '%', subtext: '(≤ 3%)', status: 'Normal', statusType: 'normal' },
+        water: { value: 14, max: 100, unit: '%', subtext: '~ 0.9 days', status: 'Critical', statusType: 'critical' },
+        pressure: { value: 14.7, max: 20, unit: 'psia', subtext: '(5-15)', status: 'Normal', statusType: 'normal' },
+      };
+      alerts.value = [
+        {
+          id: 'alert-water',
+          title: 'Water Supply Critical',
+          time: now,
+          severity: 'critical',
+          icon: 'water',
+          metric: 'Remaining: 14% (Critical: <15%)',
+          action: 'Restrict hygiene loop; prioritize drinking.',
+        },
+        {
+          id: 'alert-temp',
+          title: 'Evaporative Cooling Throttled',
+          time: now,
+          severity: 'warning',
+          icon: 'thermometer',
+          metric: 'Current: 24°C (Limit: 18–22°C)',
+          action: 'Monitor suit thermal load.',
+        },
+      ];
+    }
+  }
+
   return {
     activeTab,
     isCanvasMaximized,
@@ -331,8 +464,12 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
     crewHealth,
     lifeSupport,
     pharmaInventory,
+    costModel,
+    activeLifeSupportScenario,
     scienceTarget,
     publishRoute,
+    updateCostModel,
+    setLifeSupportScenario,
     setInspectedEntity,
     setStart,
     setGoal,

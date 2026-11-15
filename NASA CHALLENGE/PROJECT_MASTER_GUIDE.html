@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARS PATHFINDER — Project Master Guide &amp; Technical Dossier</title>
+  <style>
+    :root { --navy: #0f172a; --blue: #1d4ed8; --cyan: #0284c7; --border: #cbd5e1; --bg-soft: #f8fafc; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #1e293b;
+      line-height: 1.6;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+      background: #fff;
+    }
+    .print-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 10px;
+    }
+    .print-btn {
+      background: #38bdf8;
+      color: #0f172a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    h1 { font-size: 26px; color: var(--navy); margin: 0 0 4px; }
+    .subtitle { color: var(--cyan); font-weight: 600; font-size: 14px; margin-bottom: 22px; }
+    h2 {
+      font-size: 18px;
+      color: var(--navy);
+      border-bottom: 2px solid var(--blue);
+      padding-bottom: 5px;
+      margin-top: 28px;
+    }
+    h3 { font-size: 14.5px; color: #0f172a; margin-top: 16px; }
+    blockquote {
+      margin: 10px 0 16px;
+      padding: 12px 16px;
+      background: #eff6ff;
+      border-left: 4px solid var(--blue);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f1f5f9; color: var(--navy); font-weight: 700; }
+    ul, ol { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .qa-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      page-break-inside: avoid;
+    }
+    .qa-q { font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    @media print {
+      .print-bar { display: none; }
+      body { padding: 0; max-width: 100%; }
+      h2 { page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-bar">
+    <span><strong>MARS PATHFINDER (ARES-V)</strong> &mdash; Team Presenter &amp; Judge Dossier</span>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <h1>MARS PATHFINDER: Interplanetary Survival Guide</h1>
+  <div class="subtitle">Jezero Crater EVA Tactical Survival &amp; Route Planning Dossier (18.38&deg; N, 77.58&deg; E) &bull; 2026 NASA Space Apps Challenge</div>
+
+  <h2>1. Executive Summary &amp; Elevator Pitch</h2>
+  <h3>30-Second Elevator Pitch</h3>
+  <blockquote>
+    "NASA's Mars Trek lets you look at Mars from orbit&mdash;but it doesn't tell an astronaut walking on the surface whether they will survive the walk. <strong>Mars Pathfinder</strong> is an interactive EVA survival and route-planning system for <strong>Jezero Crater</strong>. It combines 7 real NASA orbital and rover datasets with an obstacle-avoiding <strong>A* pathfinder</strong> and a real <strong>NASA xEMU spacesuit life-support simulator</strong>. Instead of drawing a straight line over a deadly cliff, Mars Pathfinder plots the safest walkable route, tells the astronaut exactly how much oxygen, battery, and radiation dose it will cost, and automatically reroutes them back to shelter if a Solar Storm hits."
+  </blockquote>
+
+  <h3>2-Minute Presentation Pitch</h3>
+  <blockquote>
+    "When humans land in Jezero Crater, they won't just need a pretty map&mdash;they'll need a real-time tactical survival computer. Existing planetary portals like Mars Trek are built for orbital sightseeing, not for an astronaut wearing a pressurized spacesuit in 38% Earth gravity, -62&deg;C cold, and 748 Pa near-vacuum.<br><br>
+    Our project, <strong>Mars Pathfinder (ARES-V)</strong>, connects a <strong>360&deg; ball-roll 3D Mars Globe</strong> with <strong>2D Jezero EVA Mission Control</strong> overlaid with 7 NASA datasets: HiRISE cliff hazards (&gt;15&deg;&ndash;20&deg;), THEMIS sand traps, CRISM biosignature minerals, MEDA cryogenic cold shadows (-114.2&deg;C), Perseverance's actual rover path, science targets, and 10m elevation contours.<br><br>
+    An astronaut can start from Base Camp or drop anywhere on Jezero Crater, plot a hazard-safe A* route, verify exact walk time (0.80 m/s Mars pace) and xEMU PLSS oxygen consumption (530 L / 3,000 psi tank, 20.1 kJ/L metabolic conversion), and trigger an automated emergency return if a +48 mSv/hr Solar Particle Event strikes."
+  </blockquote>
+
+  <h2>2. Plain-English Walkthrough of Every Screen Feature</h2>
+  <ul>
+    <li><strong>3D Mars Globe vs. 2D Jezero EVA Map:</strong> Drag the 3D Mars Globe infinitely in any direction (Quaternion Ball-Roll with zero pole lock) to inspect global landmarks, then zoom into Jezero Crater or click <strong>Jezero EVA (2D)</strong> for 25 cm/px HiRISE surface routing across 6 key sites: <em>Octavia E. Butler Landing (Base Camp)</em>, <em>Western Delta Front (Kodiak Butte)</em>, <em>Neretva Vallis Inflow Channel</em>, <em>Carbonate Margin</em>, <em>S&eacute;&iacute;tah Dune &amp; Boulder Field</em>, and <em>Belva Impact Crater Rim</em>.</li>
+    <li><strong>The 7 Layered NASA Datasets (Left Sidebar):</strong> Toggleable pill switches with opacity sliders for <strong>Red</strong> (HiRISE slope/cliff hazards), <strong>Orange</strong> (THEMIS sand traps), <strong>Teal</strong> (CRISM minerals/biosignatures), <strong>Purple</strong> (MEDA cold shadows &amp; RAD radiation), <strong>Gold</strong> (Perseverance Sol 0&ndash;1324 ground-truth traverse), <strong>Cyan</strong> (Base Camp &amp; Science Targets), and <strong>Blue</strong> (10m Topographic Contours).</li>
+    <li><strong>Smart A* Routing &amp; Flexible Origin:</strong> Uses a <code>65&times;65</code> hazard-aware grid over Jezero Crater to avoid cliffs and sand dunes. Use <strong>Click: Target</strong> / <strong>Click: Origin</strong> or <strong>Swap</strong> to plan from any drop-off point or back to Base Camp, and tune penalties live via the <code>&#9881;</code> button.</li>
+    <li><strong>Spacesuit Life-Support (xEMU PLSS) &amp; Solar Storm (SPE):</strong> Circular gauges display Post-Trip O&#8322; (%) and Suit Battery (%). Adjust <strong>Current PLSS O&#8322; Reserve</strong> (10%&ndash;100%) to test Go/No-Go feasibility, or click <strong>Solar Storm (SPE)</strong> to trigger automated emergency return routing to Base Camp airlock.</li>
+  </ul>
+
+  <h2>3. Complete Technology Stack &amp; Architecture</h2>
+  <table>
+    <thead><tr><th>Layer</th><th>Technology / Module</th><th>Why Chosen</th></tr></thead>
+    <tbody>
+      <tr><td>UI &amp; Styling</td><td>HTML5 (<code>index.html</code>) &amp; CSS3 (<code>css/style.css</code>)</td><td>100vh dark-navy aerospace dashboard, zero build step</td></tr>
+      <tr><td>Orchestration</td><td>Vanilla ES6 JS (<code>js/app.js</code>)</td><td>Fast, dependency-light coordination of maps, routing &amp; HUD</td></tr>
+      <tr><td>2D Mapping</td><td>Leaflet.js v1.9.4</td><td>Smooth pan/zoom over NASA HiRISE 25 cm tiles &amp; GeoJSON layers</td></tr>
+      <tr><td>3D Globe</td><td>Three.js r128 (<code>js/mars-globe.js</code>)</td><td>3D Mars ellipsoid with unrestricted 360&deg; Quaternion Ball-Roll</td></tr>
+      <tr><td>Pathfinding</td><td>A* Solver (<code>js/pathfinding.js</code>)</td><td>65&times;65 grid avoiding &gt;15&deg; cliffs, sand traps &amp; cold shadows</td></tr>
+      <tr><td>Life-Support</td><td>xEMU PLSS Model (<code>js/telemetry.js</code>)</td><td>NASA-STD-3001 metabolic wattage, 20.1 kJ/L O&#8322;, mSv radiation</td></tr>
+      <tr><td>Audio &amp; Hosting</td><td>Web Audio API (<code>js/audio.js</code>) / GitHub Pages</td><td>Zero external audio assets; 100% static client-side hosting</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4. Official NASA Data Sources &amp; Scientific Provenance</h2>
+  <table>
+    <thead><tr><th>Dataset / Standard</th><th>Mission / Reference</th><th>Values / Usage in App</th></tr></thead>
+    <tbody>
+      <tr><td>Optical Basemap (25 cm/px)</td><td>MRO / HiRISE (USGS Astrogeology WMS)</td><td>Jezero Crater high-resolution surface mosaic</td></tr>
+      <tr><td>Slope &amp; Cliff Hazards</td><td>MRO / HiRISE DTM (ESP_037130_1985) &amp; MGS MOLA</td><td>28&deg;&ndash;35&deg; delta scarp cliffs &amp; 10m contours</td></tr>
+      <tr><td>Sand Traps &amp; Traction</td><td>Mars Odyssey / THEMIS</td><td>Aeolian sand ripples (5.0x default A* cost penalty)</td></tr>
+      <tr><td>Mineralogy &amp; Biosignatures</td><td>MRO / CRISM MTR3</td><td>Smectite clay, MgCO&#8323; carbonate, olivine, impact breccia</td></tr>
+      <tr><td>Weather &amp; Radiation</td><td>Mars 2020 / MEDA &amp; RAD (Sol 1324)</td><td>-62.4&deg;C air, -114.2&deg;C shadow, 748 Pa, 0.24 mSv/day, +48 mSv/hr SPE</td></tr>
+      <tr><td>xEMU PLSS &amp; Metabolic O&#8322;</td><td>NASA/TM-20205008709 &amp; NASA-STD-3001 / HIDH</td><td>530 L (0.757 kg) O&#8322; at 3,000 psi, 4.3 psi loop, 293 W / 20.1 kJ/L</td></tr>
+      <tr><td>Mars Walking Speed</td><td>NASA EVA ConOps / MKIII &amp; xEMU Analog</td><td>0.80 m/s (2.88 km/h) nominal 0.38g suit pace + slope penalty</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5. Alignment With NASA's 5 Judging Criteria</h2>
+  <ul>
+    <li><strong>Impact:</strong> Prevents fatal cliff falls, sand entrapment, and O&#8322; depletion during Mars surface EVAs.</li>
+    <li><strong>Creativity:</strong> Combines a 360&deg; ball-roll 3D Mars Globe, 2D HiRISE Mission Control, and a live PLSS O&#8322; Go/No-Go simulator.</li>
+    <li><strong>Validity:</strong> Grounded in NASA-STD-3001, NASA/TM-20205008709, MEDA Sol 1324, and HiRISE/CRISM/THEMIS data.</li>
+    <li><strong>Relevance:</strong> Directly solves human surface survival in Perseverance's real Jezero Crater exploration zone.</li>
+    <li><strong>Presentation:</strong> Clean aerospace HUD with color-coded pill toggles, circular PLSS gauges, and one-click Solar Storm demo.</li>
+  </ul>
+
+  <h2>6. Anticipated Judge Q&amp;A Cheat Sheet</h2>
+  <div class="qa-card"><div class="qa-q">1. Why can't astronauts just use NASA's Mars Trek?</div><div>Mars Trek is for orbital viewing; Mars Pathfinder adds hazard-aware A* routing around cliffs and sand traps plus real xEMU PLSS oxygen, battery, and radiation calculations.</div></div>
+  <div class="qa-card"><div class="qa-q">2. Are the oxygen and walk-time numbers real?</div><div>Yes: 0.80 m/s (2.88 km/h) Mars pressurized pace from NASA EVA ConOps, 293 W nominal load at 20.1 kJ/L O&#8322; from NASA-STD-3001, and 530 L / 3,000 psi from NASA/TM-20205008709.</div></div>
+  <div class="qa-card"><div class="qa-q">3. What if an astronaut is already low on oxygen?</div><div>The Current PLSS O&#8322; Reserve slider tests any starting tank level and flashes <strong>ABORT: O&#8322; INSUFFICIENT</strong> if the route exceeds remaining O&#8322;.</div></div>
+  <div class="qa-card"><div class="qa-q">4. Why have both a 3D Globe and a 2D Map?</div><div>The 3D Mars Globe gives planetary context (rollable 360&deg; in any direction), while zooming into Jezero enters 25 cm/px 2D tactical pathfinding.</div></div>
+  <div class="qa-card"><div class="qa-q">5. Does the astronaut always start at Base Camp?</div><div>No&mdash;use <strong>Click: Origin</strong> or <strong>Swap</strong> to route from any rover drop-off or mid-EVA point on Jezero Crater.</div></div>
+  <div class="qa-card"><div class="qa-q">6. What does Solar Storm (SPE) do?</div><div>Simulates a +48 mSv/hr proton spike, triggers an alarm, aborts sampling, and plots the fastest safe A* return route to Base Camp airlock.</div></div>
+  <div class="qa-card"><div class="qa-q">7. How does it handle steep cliffs and loose sand?</div><div>Cliffs &gt;15&deg;&ndash;20&deg; are impassable in the A* grid and THEMIS sand dunes carry a 5.0x penalty (all tunable live via <code>&#9881;</code>).</div></div>
+  <div class="qa-card"><div class="qa-q">8. Does it require a backend server?</div><div>No&mdash;it is 100% client-side HTML5/JS/CSS and deploys directly on GitHub Pages.</div></div>
+</body>
+</html>
