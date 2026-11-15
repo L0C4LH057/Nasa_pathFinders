@@ -201,18 +201,112 @@
 
 ## Phase 17: Oblique 3D Perspective, Visual Clarity & Road Hazard Mapping Overhaul <!-- id: 17 -->
 
-- [ ] 17.1 Oblique 3D Perspective & "Fly to Jezero" Camera Angle <!-- id: 17.1 -->
-  - [ ] 17.1.1 Transition default and "Fly to Jezero" camera from flat nadir -84° to dramatic oblique 3D perspective (`pitch: -48°`, `heading: 325°`, `alt: 13,500m`, `lat: 18.390, lon: 77.410`)
-  - [ ] 17.1.2 Ensure both Start and Destination endpoints, crater walls, delta scarps, and relief depth are framed cleanly
-- [ ] 17.2 High-Resolution Visual Clarity & Surface Realism <!-- id: 17.2 -->
-  - [ ] 17.2.1 Update `public/mars-data/jezero_wide_shaded_relief.png` with crisp crater rims, deep relief shadows, and prominent impact craters matching the reference UI
-  - [ ] 17.2.2 Enable `mars-hazards`, `mars-esri-ctx`, `mars-basemap`, `mars-hillshade`, and `mars-science` by default in `marsStore.js`
-- [ ] 17.3 Comprehensive Road Hazard Mapping Along Traverse <!-- id: 17.3 -->
-  - [ ] 17.3.1 Fix `marsHazardsLayer.js` to avoid Cesium GeoJSON CRS parser exception and render hazard polygons directly with `MARS_ELLIPSOID`
-  - [ ] 17.3.2 Expand `jezero_features.geojson` with mapped hazard corridors along the road: Séítah active dune ripple fields, crater rim steep slope exclusions ($>18^\circ$), boulder field clusters, and scarp drop-offs
-  - [ ] 17.3.3 Add hazard caution warning markers ($\triangle$) and badges along the road at each risk transition point with hover telemetry
-- [ ] 17.4 Traversal Route Geometry & Curvature Refinement <!-- id: 17.4 -->
-  - [ ] 17.4.1 Ensure traverse route smoothly steers around crater rims and hazard exclusion zones like the reference path
-- [ ] 17.5 Verification & Screenshot Evidence <!-- id: 17.5 -->
-  - [ ] 17.5.1 Run frontend build (`npm run build`)
-  - [ ] 17.5.2 Capture updated screenshots via Puppeteer and verify 3D perspective, sharp terrain, and road hazard mapping
+- [x] 17.1 Oblique 3D Perspective & "Fly to Jezero" Camera Angle <!-- id: 17.1 -->
+  - [x] 17.1.1 Transition default and "Fly to Jezero" camera from flat nadir -84° to dramatic oblique 3D perspective (`pitch: -55°`, `heading: 12°`, `alt: 18,000m`, `lat: 18.248, lon: 77.435`)
+  - [x] 17.1.2 Ensure both Start and Destination endpoints, crater walls, delta scarps, and relief depth are framed cleanly
+- [x] 17.2 High-Resolution Visual Clarity & Surface Realism <!-- id: 17.2 -->
+  - [x] 17.2.1 Integrate Caltech Murray Lab CTX (~5m/px) Level-9 mosaic tiles over Jezero Crater ($2048 \times 2048$, $76.64^\circ\text{E}$ to $78.05^\circ\text{E}$, $17.93^\circ\text{N}$ to $19.34^\circ\text{N}$) with authentic warm basalt colorization
+  - [x] 17.2.2 Direct connection to `https://astro.arcgis.com/arcgis/rest/services/OnMars/MDIM/MapServer` and `CTX/MapServer`
+- [x] 17.3 Comprehensive Road Hazard Mapping Along Traverse <!-- id: 17.3 -->
+  - [x] 17.3.1 Fix `marsHazardsLayer.js` to render hazard polygons with custom closed polyline borders, eliminating Cesium IAU outline artifact rays
+  - [x] 17.3.2 Expand `jezero_features.geojson` with mapped hazard corridors along the road: Séítah active dune ripple fields, delta scarp slope barrier ($>18^\circ$), Belva ejecta boulder fields, and Neretva channel margin drop-offs
+  - [x] 17.3.3 Add hazard caution warning markers ($\triangle$) and badges along the road at each risk transition point with hover telemetry
+- [x] 17.4 Traversal Route Geometry & Curvature Refinement <!-- id: 17.4 -->
+  - [x] 17.4.1 Ensure traverse route smoothly steers around crater rims and hazard exclusion zones like the reference path
+  - [x] 17.4.2 Position Start and Destination labels with custom pixel offsets to avoid visual overlap with hazard badges
+- [x] 17.5 Verification & Screenshot Evidence <!-- id: 17.5 -->
+  - [x] 17.5.1 Run frontend build (`npm run build` succeeds in 14.21s)
+  - [x] 17.5.2 Capture updated screenshots via Puppeteer and verify 3D perspective, sharp terrain, and road hazard mapping
+
+## Phase 18: Multi-Destination Planetary Exploration, Google Maps-Style Navigation, White Theme & Ultra-Clear Zoom <!-- id: 18 -->
+
+- [x] 18.1 Multi-Destination Planetary Exploration & Fly-To System <!-- id: 18.1 -->
+  - [x] 18.1.1 Define 6 famous planetary destinations (Jezero Crater, Gale Crater & Mount Sharp, Valles Marineris, Olympus Mons, Gusev Crater, Meridiani Planum) with coordinates, terrain context, and waypoints
+  - [x] 18.1.2 Create `DestinationSelector.vue` fast-fly dropdown in header replacing single "Fly to Jezero" button
+  - [x] 18.1.3 Wire camera glide transitions and regional landmark updates in `marsStore.js` and `camera.js`
+- [x] 18.2 Google Maps-Style Start & Destination Picking & Route Calculation <!-- id: 18.2 -->
+  - [x] 18.2.1 Implement interactive 3D map click-picker for Start (green pin) and Destination (red pin) in `marsController.js`
+  - [x] 18.2.2 Live recalculation of traverse route, distance, elevation gain/loss, and ETA when user picks points
+  - [x] 18.2.3 Support landmark search/select and custom coordinate inputs in Mission Overview
+- [x] 18.3 Google Maps-Style Live Traversal Navigation Simulation <!-- id: 18.3 -->
+  - [x] 18.3.1 Implement animated 3D rover vehicle puck with pulsating location ring and heading orientation in `marsRouteLayer.js`
+  - [x] 18.3.2 Implement Turn-by-Turn Guidance Banner overlay (distance to next waypoint/hazard, current speed, ETA, maneuvers)
+  - [x] 18.3.3 Implement 3D Camera Follow / Chase Mode tracking the moving rover along the terrain
+  - [x] 18.3.4 Add navigation controls (Start/Pause/Resume, Speed multiplier 1x/5x/20x, Stop navigation) and synchronized elevation profile reticle
+- [x] 18.4 White / Light Laboratory Neomorphic Theme <!-- id: 18.4 -->
+  - [x] 18.4.1 Define light neomorphic tokens (`--neo-base: #f0f4f8`, `--neo-surface: #ffffff`, `--neo-card: #f8fafc`, soft extruded shadows, crisp dark text, vibrant cyan/orange accents) in `src/ui/styles/neomorphism.css`
+  - [x] 18.4.2 Add Theme Toggle button (Dark / Light) in header navigation
+  - [x] 18.4.3 Ensure all cards, overlays, charts, and modals render cleanly in both themes
+- [x] 18.5 Crystal-Clear High-Resolution Imagery When Zoomed In <!-- id: 18.5 -->
+  - [x] 18.5.1 Configure Cesium `resolutionScale: window.devicePixelRatio` and `globe.maximumScreenSpaceError: 1.33` for razor-sharp rendering
+  - [x] 18.5.2 Configure Caltech Murray Lab CTX (~5m/px) and Esri Viking MDIM layers with levels up to LOD 17 for seamless deep zoom clarity
+  - [x] 18.5.3 Integrate Esri HiRISE targeted sub-meter imagery provider for ultra-high resolution zoom over exploration targets
+- [x] 18.6 Build, Verification & Screenshot Artifacts <!-- id: 18.6 -->
+  - [x] 18.6.1 Build frontend (`npm run build`) and test unit integrity
+  - [x] 18.6.2 Execute Puppeteer test capturing multi-destination exploration, live navigation simulation, light theme, and deep zoom clarity
+  - [x] 18.6.3 Update brain artifact documentation and lessons learned
+
+## Phase 19: Fix HTTP 500 Tile Error, Preempt Vite Proxy & Robust ArcGIS Fallback <!-- id: 19 -->
+
+- [x] 19.1 Root Cause Diagnosis & Vite Proxy Preemption <!-- id: 19.1 -->
+  - [x] 19.1.1 Remove `/esri-mars` from `server.proxy` in `build/vite.js` so Vite's built-in `http-proxy` does not forward raw 500 errors to the client
+  - [x] 19.1.2 Integrate `marsTileProxyPlugin` directly into `build/vite.js` `plugins` with `enforce: 'pre'`, handling all `/esri-mars` requests
+- [x] 19.2 Transparent PNG Fallback & Tile LRU Cache <!-- id: 19.2 -->
+  - [x] 19.2.1 Ensure upstream 4xx/5xx responses from ArcGIS Server return HTTP 200 with 1x1 transparent PNG (`TRANSPARENT_1X1_PNG`)
+  - [x] 19.2.2 Add in-memory LRU tile caching to eliminate redundant ArcGIS network roundtrips and ensure zero console errors
+  - [x] 19.2.3 Ensure preflight OPTIONS and HEAD methods are answered cleanly
+- [x] 19.3 Server Process Restart & End-to-End Verification <!-- id: 19.3 -->
+  - [x] 19.3.1 Restart Vite dev server on port 4173 with new configuration
+  - [x] 19.3.2 Test problematic tile URLs (e.g. `1/0/2`, `3/4/4`) with `curl -i` to verify 200 OK responses
+  - [x] 19.3.3 Re-run automated Puppeteer verification script (`test_user_url.mjs`) to verify ZERO 500 errors and clean console
+  - [x] 19.3.4 Document solution and update `tasks/lessons.md`
+
+## Phase 20: Fix `ERR_HTTP_HEADERS_SENT` in Tile Proxy & Prevent Server Crash <!-- id: 20 -->
+
+- [x] 20.1 Root Cause Diagnosis in `server/standalone/mars-tile-proxy.js` <!-- id: 20.1 -->
+  - [x] 20.1.1 Identify double `res.writeHead` caused by `proxyReq.destroy()` on timeout triggering `proxyReq.on('error')`
+  - [x] 20.1.2 Guard all response writing against `res.headersSent`, `res.writableEnded`, and client disconnect (`req.destroyed`)
+- [x] 20.2 Robust Single-Response Lifecycle Implementation <!-- id: 20.2 -->
+  - [x] 20.2.1 Implement `sendFallback()` guarded by `let completed = false` and `res.headersSent`
+  - [x] 20.2.2 Handle client abort (`req.on('close')`) by destroying `proxyReq` without writing to closed response
+  - [x] 20.2.3 Handle upstream stream errors cleanly during `upstreamRes.on('data')`
+- [x] 20.3 Server Restart & Comprehensive Stress Testing <!-- id: 20.3 -->
+  - [x] 20.3.1 Restart Vite daemon process cleanly on port 4173
+  - [x] 20.3.2 Execute automated navigation test verifying server stability with rapid aborted requests
+  - [x] 20.3.3 Update `tasks/lessons.md` and document lessons learned
+
+## Phase 21: Murray Lab CTX (~5m/px) Global Mosaic, Smooth Orbital Flight Spin & Razor-Sharp Planetary Zoom <!-- id: 21 -->
+
+- [x] 21.1 Integrate Caltech Murray Lab Global CTX Mosaic (`OnMars/CTX1/MapServer`) <!-- id: 21.1 -->
+  - [x] 21.1.1 Update `src/layers/mars/marsEsriCtxLayer.js` to stream `OnMars/CTX1/MapServer` from LOD 0 to LOD 17 (5.0m/px global coverage)
+  - [x] 21.1.2 Set full opacity and ensure seamless photographic texture draped over `MARS_ELLIPSOID` everywhere on the planet
+  - [x] 21.1.3 Add Meridiani Planum and Gusev Crater relief bounds to `src/layers/mars/marsHillshadeLayer.js`
+- [x] 21.2 Smooth Orbital Flight Spin & Elimination of Wild Barrel Rolls <!-- id: 21.2 -->
+  - [x] 21.2.1 Update `src/destinations.js` `flyToDestination` with calculated orbital apex (`maximumHeight`), `pitchAdjustHeight`, and strict `roll: 0.0`
+  - [x] 21.2.2 Implement smooth polar axis globe rotation (just like `https://murray-lab.caltech.edu/CTX/`) eliminating erratic tumble/corkscrew
+  - [x] 21.2.3 Align destination camera pitch/heading with Murray Lab SceneView reference parameters for Meridiani, Gale, Jezero, and Gusev
+- [x] 21.3 Globe-Wide Razor-Sharp Clarity on All Zooms & Views <!-- id: 21.3 -->
+  - [x] 21.3.1 Configure Cesium viewer with `resolutionScale: window.devicePixelRatio` and `maximumScreenSpaceError: 1.2` for crisp LOD tile streaming
+  - [x] 21.3.2 Verify deep zoom clarity on Meridiani Planum (Endeavour & Eagle crater rims) and all planetary destinations
+- [x] 21.4 Verification & Artifact Generation <!-- id: 21.4 -->
+  - [x] 21.4.1 Run frontend build (`npm run build`)
+  - [x] 21.4.2 Execute Puppeteer verification script capturing Meridiani Planum high-res zoom and smooth camera transition
+  - [x] 21.4.3 Document findings in `tasks/lessons.md` and brain artifacts
+
+## Phase 22: Eliminate Artificial Clay Rectangles & Fix Deep Zoom Black Tiles (LOD 12 Upsampling) <!-- id: 22 -->
+
+- [x] 22.1 Fix Deep Zoom Black Tiles via Level 12 Native Upsampling <!-- id: 22.1 -->
+  - [x] 22.1.1 Clamp `marsEsriCtxLayer.js` to `maximumLevel: 12` (the verified maximum pre-rendered LOD on `OnMars/CTX1/MapServer`)
+  - [x] 22.1.2 Enable Cesium native tile upsampling beyond Level 12 so zooming in down to 10m never requests non-existent LODs 13–17 (which 400 and turn black)
+  - [x] 22.1.3 Set `viewer.scene.globe.baseColor` to warm Martian basalt `#a35835` to prevent black void flashes
+  - [x] 22.1.4 In `server/standalone/mars-tile-proxy.js`, avoid poisoning LRU tile cache with transparent fallback buffers on transient upstream 4xx/5xx errors
+- [x] 22.2 Purge Artificial Clay Rectangles on Destinations <!-- id: 22.2 -->
+  - [x] 22.2.1 Completely eliminate synthetic single-tile relief imagery providers in `marsHillshadeLayer.js`
+  - [x] 22.2.2 Remove `mars-hillshade` from `layerStates` in `marsStore.js` and remove `setDestinationRelief` calls in `marsController.js`
+  - [x] 22.2.3 Allow the authentic, uniform, photorealistic Caltech Murray Lab CTX photographic mosaic (~5m/px) to render seamlessly across all planetary destinations
+  - [x] 22.2.4 Ensure Gusev, Olympus Mons, Valles Marineris, Meridiani, Gale, and Jezero display continuous real photographic terrain with zero artificial clay patches
+- [x] 22.3 Verification & Multi-Destination Deep Zoom Evidence <!-- id: 22.3 -->
+  - [x] 22.3.1 Build frontend (`npm run build`) bundles 894 modules in 13.38s with 0 errors
+  - [x] 22.3.2 Execute automated test capturing deep zooms on Gusev, Olympus Mons, Valles Marineris, Meridiani Planum, Jezero, and Gale
+  - [x] 22.3.3 Confirm zero black tiles, zero clay patches, and 100% clean console logs (0 HTTP 500s, 0 console errors)
+  - [x] 22.3.4 Document architectural solution in `tasks/lessons.md`

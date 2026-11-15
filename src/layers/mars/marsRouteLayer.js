@@ -6,10 +6,11 @@ export function createMarsRouteLayer({ viewer }) {
   let returnEntity = null;
   let startEntity = null;
   let goalEntity = null;
-  let hazardEntity = null;
+  let hazardEntities = [];
   let scienceEntity1 = null;
   let scienceEntity2 = null;
   let reticleEntity = null;
+  let roverEntity = null;
   let visible = true;
 
   const entities = viewer.entities;
@@ -31,10 +32,10 @@ export function createMarsRouteLayer({ viewer }) {
       entities.remove(goalEntity);
       goalEntity = null;
     }
-    if (hazardEntity) {
-      entities.remove(hazardEntity);
-      hazardEntity = null;
+    for (const ent of hazardEntities) {
+      entities.remove(ent);
     }
+    hazardEntities = [];
     if (scienceEntity1) {
       entities.remove(scienceEntity1);
       scienceEntity1 = null;
@@ -78,29 +79,8 @@ export function createMarsRouteLayer({ viewer }) {
       },
     });
 
-    // 2. Return Leg Polyline (Subtle Dashed Gold)
-    if (returnLeg && returnLeg.points && returnLeg.points.length > 0) {
-      const returnPositions = returnLeg.points.map((pt) =>
-        Cesium.Cartesian3.fromDegrees(pt.lon, pt.lat, 25.0, MARS_ELLIPSOID)
-      );
-
-      returnEntity = entities.add({
-        name: 'Return Traverse',
-        polyline: {
-          positions: returnPositions,
-          width: 3.5,
-          arcType: Cesium.ArcType.NONE,
-          material: new Cesium.PolylineDashMaterialProperty({
-            color: Cesium.Color.fromCssColorString('#ffb703'),
-            dashLength: 16.0,
-          }),
-          depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-            color: Cesium.Color.fromCssColorString('#ffb703'),
-            dashLength: 16.0,
-          }),
-        },
-      });
-    }
+    // 2. Return Leg Polyline (Only show if explicitly requested, keep primary traverse clean)
+    // Primary traverse is the glowing cyan ribbon matching reference UI
 
     // 3. Start Pin (Green with white halo matching UI mockup)
     const startPt = outbound.points[0];
@@ -141,24 +121,33 @@ export function createMarsRouteLayer({ viewer }) {
         outlineColor: Cesium.Color.fromCssColorString('#090c12'),
         outlineWidth: 3.5,
         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        pixelOffset: new Cesium.Cartesian2(48, 0),
+        pixelOffset: new Cesium.Cartesian2(0, -26),
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
       },
     });
 
-    // 5. Route Hazard Caution Marker (Yellow Triangle at Midpoint Dune Slope)
-    const midIdx = Math.floor(outbound.points.length * 0.48);
-    const midPt = outbound.points[midIdx];
-    if (midPt) {
-      hazardEntity = entities.add({
-        name: 'Slope & Sand Hazard',
-        position: Cesium.Cartesian3.fromDegrees(midPt.lon, midPt.lat, 35.0, MARS_ELLIPSOID),
-        billboard: {
-          image: createHazardWarningCanvas(),
-          verticalOrigin: Cesium.VerticalOrigin.CENTER,
-          disableDepthTestDistance: Number.POSITIVE_INFINITY,
-        },
-      });
+    // 5. Multiple Route Hazard Caution Markers along the Road
+    const hazardConfigs = [
+      { frac: 0.25, label: 'Dune Incline Caution' },
+      { frac: 0.50, label: 'Séítah Sand Ripples' },
+      { frac: 0.75, label: 'Boulder Obstacle Zone' },
+    ];
+
+    for (const hc of hazardConfigs) {
+      const idx = Math.floor(outbound.points.length * hc.frac);
+      const pt = outbound.points[idx];
+      if (pt) {
+        const ent = entities.add({
+          name: hc.label,
+          position: Cesium.Cartesian3.fromDegrees(pt.lon, pt.lat, 35.0, MARS_ELLIPSOID),
+          billboard: {
+            image: createHazardWarningCanvas(),
+            verticalOrigin: Cesium.VerticalOrigin.CENTER,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          },
+        });
+        hazardEntities.push(ent);
+      }
     }
 
     // 6. Science Target Hexagonal Markers along traverse
@@ -218,10 +207,43 @@ export function createMarsRouteLayer({ viewer }) {
     }
   }
 
+  function updateRoverPosition(lat, lon, headingDeg = 0, alt = 35.0) {
+    const pos = Cesium.Cartesian3.fromDegrees(lon, lat, alt, MARS_ELLIPSOID);
+
+    if (!roverEntity) {
+      roverEntity = entities.add({
+        name: 'Autonomous Rover Location',
+        position: pos,
+        billboard: {
+          image: createRoverBeaconCanvas(),
+          rotation: Cesium.Math.toRadians(-headingDeg),
+          alignedAxis: Cesium.Cartesian3.UNIT_Z,
+          verticalOrigin: Cesium.VerticalOrigin.CENTER,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          scale: 1.0,
+        },
+      });
+    } else {
+      roverEntity.position = pos;
+      if (roverEntity.billboard) {
+        roverEntity.billboard.rotation = Cesium.Math.toRadians(-headingDeg);
+      }
+    }
+  }
+
+  function clearRover() {
+    if (roverEntity) {
+      entities.remove(roverEntity);
+      roverEntity = null;
+    }
+  }
+
   return {
     id: 'mars-route',
     name: 'Pathfinding Traversal Track',
     updateRoutes,
+    updateRoverPosition,
+    clearRover,
     setReticle,
     clearRoutes,
     show: () => {
@@ -230,7 +252,8 @@ export function createMarsRouteLayer({ viewer }) {
       if (returnEntity) returnEntity.show = true;
       if (startEntity) startEntity.show = true;
       if (goalEntity) goalEntity.show = true;
-      if (hazardEntity) hazardEntity.show = true;
+      if (roverEntity) roverEntity.show = true;
+      for (const h of hazardEntities) h.show = true;
       if (scienceEntity1) scienceEntity1.show = true;
       if (scienceEntity2) scienceEntity2.show = true;
     },
@@ -240,12 +263,14 @@ export function createMarsRouteLayer({ viewer }) {
       if (returnEntity) returnEntity.show = false;
       if (startEntity) startEntity.show = false;
       if (goalEntity) goalEntity.show = false;
-      if (hazardEntity) hazardEntity.show = false;
+      if (roverEntity) roverEntity.show = false;
+      for (const h of hazardEntities) h.show = false;
       if (scienceEntity1) scienceEntity1.show = false;
       if (scienceEntity2) scienceEntity2.show = false;
     },
     isVisible: () => visible,
     destroy: () => {
+      clearRover();
       clearRoutes();
     },
   };
@@ -348,5 +373,53 @@ function createScienceHexCanvas() {
   ctx.closePath();
   ctx.fill();
 
+  return canvas;
+}
+
+function createRoverBeaconCanvas() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+
+  ctx.save();
+  ctx.translate(32, 32);
+
+  // Outer glowing pulse aura
+  const grad = ctx.createRadialGradient(0, 0, 8, 0, 0, 30);
+  grad.addColorStop(0, 'rgba(0, 210, 255, 0.85)');
+  grad.addColorStop(0.45, 'rgba(0, 210, 255, 0.35)');
+  grad.addColorStop(1, 'rgba(0, 210, 255, 0.0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, 30, 0, Math.PI * 2);
+  ctx.fill();
+
+  // White base disc
+  ctx.beginPath();
+  ctx.arc(0, 0, 16, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#00d2ff';
+  ctx.stroke();
+
+  // Inner vivid location puck
+  ctx.beginPath();
+  ctx.arc(0, 0, 11, 0, Math.PI * 2);
+  ctx.fillStyle = '#0284c7';
+  ctx.fill();
+
+  // Forward Direction Navigation Arrow (pointing North = 0 deg)
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(0, -9);
+  ctx.lineTo(6, 6);
+  ctx.lineTo(0, 3);
+  ctx.lineTo(-6, 6);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
   return canvas;
 }

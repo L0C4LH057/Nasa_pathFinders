@@ -3,10 +3,10 @@ import { MARS_ELLIPSOID } from './app/marsEllipsoid.js';
 
 export const JEZERO_COORDINATES = Object.freeze({
   lon: 77.4350,
-  lat: 18.4360,
-  altitude: 20000.0,
-  headingDeg: 0.0,
-  pitchDeg: -84.0,
+  lat: 18.2480,
+  altitude: 18000.0,
+  headingDeg: 12.0,
+  pitchDeg: -55.0,
 });
 
 /**
@@ -32,7 +32,7 @@ export function setViewJezero(viewer) {
 /**
  * Fly camera to Jezero Crater Western Delta pilot region.
  */
-export function flyToJezero(viewer, { duration = 2.0 } = {}) {
+export function flyToJezero(viewer, { duration = 3.0 } = {}) {
   const dest = Cesium.Cartesian3.fromDegrees(
     JEZERO_COORDINATES.lon,
     JEZERO_COORDINATES.lat,
@@ -47,6 +47,8 @@ export function flyToJezero(viewer, { duration = 2.0 } = {}) {
       roll: 0.0,
     },
     duration,
+    pitchAdjustHeight: 45000,
+    maximumHeight: 1800000,
     easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
   });
 }

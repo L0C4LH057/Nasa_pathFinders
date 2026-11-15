@@ -13,8 +13,16 @@ import PharmaceuticalMedicalCard from './cards/PharmaceuticalMedicalCard.vue';
 import CrewHealthCard from './cards/CrewHealthCard.vue';
 import LifeSupportCard from './cards/LifeSupportCard.vue';
 import InCanvasControls from './cards/InCanvasControls.vue';
+import DestinationSelector from './cards/DestinationSelector.vue';
+import LiveNavigationCard from './cards/LiveNavigationCard.vue';
 
 const store = useMarsStore();
+
+onMounted(() => {
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.toggle('theme-light', store.currentTheme === 'light');
+  }
+});
 
 const activeTab = computed(() => store.activeTab);
 const isMaximized = computed(() => store.isCanvasMaximized);
@@ -151,10 +159,21 @@ onMounted(() => {
 
       <!-- Right Actions & Commander Avatar -->
       <div class="nav-right">
-        <button class="nav-action-btn" @click="resetCamera" title="Reset Camera to Jezero Delta">
-          <svg viewBox="0 0 24 24" class="btn-svg"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><ellipse cx="12" cy="12" rx="10" ry="3.5" fill="none" stroke="currentColor" stroke-width="1.3" transform="rotate(-20 12 12)"/></svg>
-          <span>Fly to Jezero</span>
+        <!-- Mars Destination Selector Dropdown -->
+        <DestinationSelector />
+
+        <!-- Theme Toggle: Dark vs Light Cleanroom Lab -->
+        <button class="nav-action-btn theme-toggle-btn" @click="store.toggleTheme()" :title="store.currentTheme === 'light' ? 'Switch to Orbital Dark Mode' : 'Switch to Cleanroom Light Mode'">
+          <svg v-if="store.currentTheme === 'light'" viewBox="0 0 24 24" class="btn-svg">
+            <path fill="currentColor" d="M12.3 2a10 10 0 0 0-.19 20 10.04 10.04 0 0 0 9.89-7.58 1 1 0 0 0-1.21-1.21A8 8 0 1 1 12.3 2z"/>
+          </svg>
+          <svg v-else viewBox="0 0 24 24" class="btn-svg">
+            <circle cx="12" cy="12" r="5" fill="currentColor"/>
+            <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 2v2m0 16v2M4 12H2m20 0h-2m-2.93-7.07l-1.41 1.41m-9.32 9.32l-1.41 1.41m0-12.14l1.41 1.41m9.32 9.32l1.41 1.41"/>
+          </svg>
+          <span>{{ store.currentTheme === 'light' ? 'Dark' : 'Light' }}</span>
         </button>
+
         <button class="nav-action-btn" @click="openProvenance" title="Planetary Dataset Provenance">
           <svg viewBox="0 0 24 24" class="btn-svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="currentColor" d="M12 17h-1v-5h2v5zm0-7h-1V8h2v2z"/></svg>
           <span>Provenance</span>
@@ -186,6 +205,7 @@ onMounted(() => {
             <div class="neo-canvas-card neo-card">
               <!-- Floating Overlays directly inside Canvas -->
               <InCanvasControls />
+              <LiveNavigationCard />
 
               <!-- Cesium Container Host (Preserves WebGL Instance) -->
               <div id="cesiumContainer" class="cesium-hero-viewport"></div>

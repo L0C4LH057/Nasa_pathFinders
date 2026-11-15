@@ -6,13 +6,15 @@ export function createMarsBasemapLayer({ viewer }) {
   let visible = true;
   let opacity = 1.0;
 
-  // Esri Explore Mars Viking MDIM 2.1 Color Global Mosaic (astro.arcgis.com)
+  // Geographic Tiling Scheme for IAU 2015 Mars Reference Ellipsoid
   const tilingScheme = new Cesium.GeographicTilingScheme({
     ellipsoid: MARS_ELLIPSOID,
     numberOfLevelZeroTilesX: 2,
     numberOfLevelZeroTilesY: 1,
   });
 
+  // Esri Explore Mars Viking MDIM 2.1 Photographic Natural Color Mosaic
+  // Proxied through /esri-mars to prevent CORS blocks and handle missing tiles
   const provider = new Cesium.UrlTemplateImageryProvider({
     url: '/esri-mars/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}',
     tilingScheme,
@@ -35,7 +37,7 @@ export function createMarsBasemapLayer({ viewer }) {
 
   return {
     id: 'mars-basemap',
-    name: 'Esri Viking Color Mosaic',
+    name: 'Esri Viking MDIM 2.1 Color Mosaic',
     show: () => {
       visible = true;
       if (imageryLayer) imageryLayer.show = true;

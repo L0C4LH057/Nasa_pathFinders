@@ -14,9 +14,9 @@ export function createMarsEsriMdimLayer({ viewer }) {
   });
 
   const provider = new Cesium.UrlTemplateImageryProvider({
-    url: 'https://astro.arcgis.com/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}',
+    url: '/esri-mars/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}',
     tilingScheme,
-    maximumLevel: 8,
+    maximumLevel: 7,
     ellipsoid: MARS_ELLIPSOID,
     credit: new Cesium.Credit('Esri / NASA Ames / USGS Astrogeology Mars MDIM 2.1'),
     hasAlphaChannel: true,

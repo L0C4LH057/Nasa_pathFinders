@@ -3,10 +3,10 @@ import { MARS_ELLIPSOID } from '../../app/marsEllipsoid.js';
 
 export function createMarsEsriCtxLayer({ viewer }) {
   let imageryLayer = null;
-  let visible = false;
-  let opacity = 0.55;
+  let visible = true;
+  let opacity = 1.0;
 
-  // Esri Explore Mars Context Camera (CTX) ~5m Global Mosaic (Caltech Murray Lab / MSSS / NASA / Esri)
+  // Caltech Murray Lab Global CTX Mosaic ~5m/px (MSSS / NASA JPL / Caltech / Esri)
   const tilingScheme = new Cesium.GeographicTilingScheme({
     ellipsoid: MARS_ELLIPSOID,
     numberOfLevelZeroTilesX: 2,
@@ -14,15 +14,15 @@ export function createMarsEsriCtxLayer({ viewer }) {
   });
 
   const provider = new Cesium.UrlTemplateImageryProvider({
-    url: '/esri-mars/arcgis/rest/services/OnMars/CTX/MapServer/tile/{z}/{y}/{x}',
+    url: '/esri-mars/arcgis/rest/services/OnMars/CTX1/MapServer/tile/{z}/{y}/{x}',
     tilingScheme,
     tileWidth: 512,
     tileHeight: 512,
-    minimumLevel: 2,
+    minimumLevel: 0,
     maximumLevel: 12,
     ellipsoid: MARS_ELLIPSOID,
-    credit: new Cesium.Credit('Esri / Caltech Murray Lab / NASA MRO CTX (~5m/px)'),
-    hasAlphaChannel: true,
+    credit: new Cesium.Credit('Caltech Murray Lab / NASA MRO CTX Global Mosaic (~5m/px)'),
+    hasAlphaChannel: false,
   });
 
   // Gracefully silence sporadic ArcGIS server edge-tile misses
@@ -36,7 +36,7 @@ export function createMarsEsriCtxLayer({ viewer }) {
 
   return {
     id: 'mars-esri-ctx',
-    name: 'Esri CTX 5m High-Res (Explore Mars)',
+    name: 'Caltech Murray Lab CTX 5m Global Mosaic',
     show: () => {
       visible = true;
       if (imageryLayer) imageryLayer.show = true;

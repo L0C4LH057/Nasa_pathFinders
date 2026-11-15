@@ -125,15 +125,6 @@ function toggleExpand() {
       </div>
       <div class="scale-lbl">5 km</div>
     </div>
-
-    <!-- Bottom Center: Coordinate Readout -->
-    <div class="coord-pill neo-sunken">
-      <span>LAT: {{ store.cursorCoords.lat }}°N</span>
-      <span class="sep">|</span>
-      <span>LON: {{ store.cursorCoords.lon }}°E</span>
-      <span class="sep">|</span>
-      <span>ALT: {{ store.cursorCoords.alt }} m</span>
-    </div>
   </div>
 </template>
 
@@ -337,9 +328,8 @@ function toggleExpand() {
 .coord-pill {
   position: absolute;
   bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 12px;
+  left: 90px;
+  padding: 5px 12px;
   font-family: var(--neo-font-mono, monospace);
   font-size: 0.72rem;
   color: #94a3b8;

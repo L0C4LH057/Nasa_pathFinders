@@ -4,18 +4,12 @@ import { useMarsStore } from '../../stores/marsStore.js';
 
 const store = useMarsStore();
 
-const WAYPOINTS = [
-  { label: 'Start (Jezero South)', lat: 18.370, lon: 77.348 },
-  { label: 'Destination (Séítah Region)', lat: 18.502, lon: 77.522 },
-  { label: 'Octavia E. Butler Landing Site', lat: 18.4447, lon: 77.4508 },
-  { label: 'Séítah Sand Dune Margin', lat: 18.4350, lon: 77.4420 },
-  { label: 'Three Forks Sample Depot', lat: 18.4550, lon: 77.4410 },
-  { label: 'Hawksbill Gap Delta Scarp', lat: 18.4600, lon: 77.4280 },
-  { label: 'Neretva Margin Carbonate Unit', lat: 18.4685, lon: 77.4165 },
-  { label: 'Kodiak Butte Isolated Remnant', lat: 18.4230, lon: 77.4485 },
-];
+const activeWaypoints = computed(() => {
+  return store.currentDestination?.waypoints || [];
+});
 
 const isComputing = ref(false);
+const showWaypoints = ref(false);
 
 const distanceDisplay = computed(() => {
   if (store.routeData?.outbound?.points?.length > 0) {
@@ -45,13 +39,19 @@ const estimatedTimeDisplay = computed(() => {
 });
 
 function onStartChange(e) {
-  const wp = WAYPOINTS.find((w) => w.label === e.target.value);
-  if (wp) store.setStart(wp);
+  const wp = activeWaypoints.value.find((w) => w.label === e.target.value);
+  if (wp) {
+    store.setStart(wp);
+    computeOptimalTraverse();
+  }
 }
 
 function onGoalChange(e) {
-  const wp = WAYPOINTS.find((w) => w.label === e.target.value);
-  if (wp) store.setGoal(wp);
+  const wp = activeWaypoints.value.find((w) => w.label === e.target.value);
+  if (wp) {
+    store.setGoal(wp);
+    computeOptimalTraverse();
+  }
 }
 
 function pickStartOnMap() {
@@ -64,6 +64,14 @@ function pickGoalOnMap() {
   if (window.__marsController) {
     window.__marsController.armCoordinatePicker('goal');
   }
+}
+
+function swapPoints() {
+  store.swapStartAndGoal();
+}
+
+function startNavigation() {
+  store.startNavigation();
 }
 
 async function computeOptimalTraverse() {
@@ -98,11 +106,11 @@ async function computeOptimalTraverse() {
         <div class="overview-details">
           <div class="detail-row">
             <span class="lbl">Current Location</span>
-            <span class="val">Jezero Crater</span>
+            <span class="val">{{ store.currentDestination.name }}</span>
           </div>
           <div class="detail-row">
             <span class="lbl">Destination</span>
-            <span class="val accent-val">{{ store.goalCoord.label.includes('Séítah') ? 'Séítah Region' : store.goalCoord.label }}</span>
+            <span class="val accent-val">{{ store.goalCoord.label }}</span>
           </div>
           <div class="detail-row">
             <span class="lbl">Estimated Time</span>
@@ -138,8 +146,28 @@ async function computeOptimalTraverse() {
         </div>
       </div>
 
-      <!-- Waypoint Coordination Pickers -->
-      <div class="waypoints-picker">
+      <!-- Google Maps-Style Start Navigation & Route Details Actions -->
+      <div class="actions-strip">
+        <button
+          class="start-nav-btn neo-btn"
+          :class="{ active: store.isNavigating }"
+          @click="startNavigation"
+          title="Start Live Turn-by-Turn Driving Navigation"
+        >
+          <svg viewBox="0 0 24 24" class="nav-icon-svg">
+            <path fill="currentColor" d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+          </svg>
+          <span>{{ store.isNavigating ? 'Navigating...' : 'Start Navigation' }}</span>
+        </button>
+
+        <button class="footer-link-btn" @click="showWaypoints = !showWaypoints">
+          <span>{{ showWaypoints ? 'Hide Inputs' : 'Waypoints' }}</span>
+          <svg viewBox="0 0 24 24" class="link-arrow"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+        </button>
+      </div>
+
+      <!-- Collapsible Waypoint Coordination Pickers (Google Maps Style) -->
+      <div v-if="showWaypoints" class="waypoints-picker">
         <div class="picker-row">
           <div class="picker-label-group">
             <span class="pin-dot pin-start">A</span>
@@ -147,8 +175,8 @@ async function computeOptimalTraverse() {
           </div>
           <div class="picker-input-wrap">
             <select class="neo-select" :value="store.startCoord.label" @change="onStartChange">
-              <option v-for="w in WAYPOINTS" :key="w.label" :value="w.label">{{ w.label }}</option>
-              <option v-if="!WAYPOINTS.some(w => w.label === store.startCoord.label)" :value="store.startCoord.label">
+              <option v-for="w in activeWaypoints" :key="w.label" :value="w.label">{{ w.label }}</option>
+              <option v-if="!activeWaypoints.some(w => w.label === store.startCoord.label)" :value="store.startCoord.label">
                 {{ store.startCoord.label }}
               </option>
             </select>
@@ -156,11 +184,20 @@ async function computeOptimalTraverse() {
               class="neo-btn pick-crosshair-btn"
               :class="{ active: store.activePicker === 'start' }"
               @click="pickStartOnMap"
-              title="Pick coordinate on 3D Mars globe"
+              title="Pick start location on 3D Mars globe"
             >
               <svg viewBox="0 0 24 24" class="crosshair-svg"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="12" y1="2" x2="12" y2="6" stroke="currentColor" stroke-width="1.8"/><line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" stroke-width="1.8"/><line x1="2" y1="12" x2="6" y2="12" stroke="currentColor" stroke-width="1.8"/><line x1="18" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8"/></svg>
             </button>
           </div>
+        </div>
+
+        <!-- Google Maps-style Swap Button -->
+        <div class="swap-row">
+          <button class="swap-btn" @click="swapPoints" title="Swap Start and Destination">
+            <svg viewBox="0 0 24 24" class="swap-svg">
+              <path fill="currentColor" d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
+            </svg>
+          </button>
         </div>
 
         <div class="picker-row">
@@ -170,8 +207,8 @@ async function computeOptimalTraverse() {
           </div>
           <div class="picker-input-wrap">
             <select class="neo-select" :value="store.goalCoord.label" @change="onGoalChange">
-              <option v-for="w in WAYPOINTS" :key="w.label" :value="w.label">{{ w.label }}</option>
-              <option v-if="!WAYPOINTS.some(w => w.label === store.goalCoord.label)" :value="store.goalCoord.label">
+              <option v-for="w in activeWaypoints" :key="w.label" :value="w.label">{{ w.label }}</option>
+              <option v-if="!activeWaypoints.some(w => w.label === store.goalCoord.label)" :value="store.goalCoord.label">
                 {{ store.goalCoord.label }}
               </option>
             </select>
@@ -179,23 +216,23 @@ async function computeOptimalTraverse() {
               class="neo-btn pick-crosshair-btn"
               :class="{ active: store.activePicker === 'goal' }"
               @click="pickGoalOnMap"
-              title="Pick destination on 3D Mars globe"
+              title="Pick destination location on 3D Mars globe"
             >
               <svg viewBox="0 0 24 24" class="crosshair-svg"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="12" y1="2" x2="12" y2="6" stroke="currentColor" stroke-width="1.8"/><line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" stroke-width="1.8"/><line x1="2" y1="12" x2="6" y2="12" stroke="currentColor" stroke-width="1.8"/><line x1="18" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8"/></svg>
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Action Button -->
-      <button
-        class="neo-btn neo-btn-primary full-width-btn"
-        :disabled="isComputing"
-        @click="computeOptimalTraverse"
-      >
-        <span v-if="isComputing" class="spinner"></span>
-        <span v-else>Compute Optimal Traverse &rarr;</span>
-      </button>
+        <!-- Recompute Button -->
+        <button
+          class="neo-btn neo-btn-primary full-width-btn"
+          :disabled="isComputing"
+          @click="computeOptimalTraverse"
+        >
+          <span v-if="isComputing" class="spinner"></span>
+          <span v-else>Recalculate Traverse &rarr;</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -330,6 +367,114 @@ async function computeOptimalTraverse() {
 .badge-risk {
   font-size: 0.72rem;
   color: #fbbf24;
+}
+
+.actions-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.start-nav-btn {
+  flex: 1;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: #ffffff;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s ease;
+}
+
+.start-nav-btn:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+  transform: translateY(-1px);
+}
+
+.start-nav-btn.active {
+  background: linear-gradient(135deg, #0284c7 0%, #00d2ff 100%);
+  border-color: rgba(0, 210, 255, 0.5);
+  box-shadow: 0 0 14px rgba(0, 210, 255, 0.45);
+}
+
+.nav-icon-svg {
+  width: 15px;
+  height: 15px;
+  transform: rotate(45deg);
+}
+
+.swap-row {
+  display: flex;
+  justify-content: center;
+  margin: -4px 0;
+}
+
+.swap-btn {
+  background: var(--neo-card-bg);
+  border: 1px solid var(--neo-border);
+  color: var(--neo-cyan);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--neo-shadow-btn);
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.swap-btn:hover {
+  border-color: var(--neo-cyan);
+  background: rgba(0, 210, 255, 0.15);
+  transform: scale(1.1);
+}
+
+.swap-svg {
+  width: 14px;
+  height: 14px;
+}
+
+.card-footer-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  color: var(--neo-cyan);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.footer-link-btn:hover {
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+}
+
+.link-arrow {
+  width: 14px;
+  height: 14px;
 }
 
 /* Waypoints Selection */

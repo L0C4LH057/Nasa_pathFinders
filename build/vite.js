@@ -5,6 +5,7 @@ import { VUE_PLUGIN_OPTIONS } from './vueOptions.js';
 import { DEFAULT_ALLOWED_HOSTS, hostCheckPlugin } from './allowedHosts.js';
 import { embedFramingPlugin } from './embed-framing.js';
 import { panelBuildPlugin } from './panel.js';
+import { marsTileProxyPlugin } from '../server/standalone/mars-tile-proxy.js';
 
 /**
  * The repository root (this file lives at `<root>/build/vite.js`), as a
@@ -179,6 +180,7 @@ export function createBrowserViteConfig({
   const photonSetting = photonEndpointSetting(photonUrl);
   return {
     plugins: [
+      marsTileProxyPlugin(),
       // First, so every API response, including a Host refusal, carries them.
       apiResponseHeadersPlugin(),
       // Next, so no provider route answers a Host the server does not allow.
@@ -214,11 +216,6 @@ export function createBrowserViteConfig({
         '/api/mars': {
           target: 'http://127.0.0.1:8081',
           changeOrigin: true,
-        },
-        '/esri-mars': {
-          target: 'https://astro.arcgis.com',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/esri-mars/, ''),
         },
       },
       // A wildcard bind only chooses interfaces; it never disables Vite's

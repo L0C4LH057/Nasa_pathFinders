@@ -109,20 +109,89 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [77.4420, 18.4350],
-            [77.4480, 18.4350],
-            [77.4470, 18.4270],
-            [77.4410, 18.4270],
-            [77.4420, 18.4350]
+            [77.4300, 18.4300],
+            [77.4580, 18.4420],
+            [77.4620, 18.4320],
+            [77.4340, 18.4200],
+            [77.4300, 18.4300]
           ]
         ]
       },
       "properties": {
         "name": "Séítah Sand Dune Ripple Hazard",
-        "category": "hazard_exclusion",
+        "category": "dune_hazard",
         "hazard_type": "aeolian_sand_entrapment",
+        "severity": 0.85,
+        "warning": "Active transverse sand ripples prone to wheel entrapment. Recommended corridor speed limit 0.8 km/h."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "delta-scarp-slope-hazard",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.4150, 18.4420],
+            [77.4350, 18.4560],
+            [77.4420, 18.4480],
+            [77.4220, 18.4340],
+            [77.4150, 18.4420]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Delta Scarp Slope Barrier (>18°)",
+        "category": "hazard_exclusion",
+        "hazard_type": "steep_scarp_slope",
         "severity": 1.0,
-        "warning": "Unconsolidated fine sand ripples prone to wheel entrapment. Hard exclusion barrier."
+        "warning": "Steep rocky scarp exceeding 18° maximum vehicle slope threshold. Impassable barrier."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "belva-boulder-field-hazard",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.4600, 18.4620],
+            [77.4880, 18.4800],
+            [77.4940, 18.4710],
+            [77.4660, 18.4530],
+            [77.4600, 18.4620]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Belva Ejecta Boulder Hazard Field",
+        "category": "boulder_hazard",
+        "hazard_type": "boulder_field_density",
+        "severity": 0.75,
+        "warning": "High density of perched impact boulders (>1.2m diameter). Elevated suspension articulation required."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "neretva-channel-scarp",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.5080, 18.4980],
+            [77.5380, 18.5200],
+            [77.5440, 18.5100],
+            [77.5140, 18.4880],
+            [77.5080, 18.4980]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Neretva Channel Margin Escarpment",
+        "category": "hazard_exclusion",
+        "hazard_type": "channel_drop_off",
+        "severity": 0.95,
+        "warning": "Unconsolidated channel bank drop-off. 5-meter safety standoff buffer enforced."
       }
     },
     {
@@ -132,16 +201,16 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [77.4000, 18.4100],
-            [77.4100, 18.4100],
-            [77.4100, 18.4300],
-            [77.4000, 18.4300],
-            [77.4000, 18.4100]
+            [77.3300, 18.3520],
+            [77.3620, 18.3750],
+            [77.3520, 18.3900],
+            [77.3200, 18.3670],
+            [77.3300, 18.3520]
           ]
         ]
       },
       "properties": {
-        "name": "Coarse MOLA Low-Confidence Boundary",
+        "name": "Coarse MOLA Topography Uncertainty Zone",
         "category": "uncertainty_zone",
         "hazard_type": "coarse_resolution_463m",
         "severity": 0.8,

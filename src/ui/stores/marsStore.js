@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { markRaw, shallowRef, ref } from 'vue';
+import { markRaw, shallowRef, ref, computed } from 'vue';
+import { MARS_DESTINATIONS } from '../../destinations.js';
 
 export const useMarsStore = defineStore('mars-pathfinder', () => {
   // Navigation tabs: 'mission-control' | 'pharma' | 'life-support' | 'alerts' | 'settings'
@@ -7,6 +8,16 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
 
   // Big Canvas View Mode: true expands canvas to 100% full screen
   const isCanvasMaximized = ref(false);
+
+  // Theme: 'dark' | 'light' (saved in localStorage)
+  const currentTheme = ref(typeof window !== 'undefined' ? (localStorage.getItem('mars_theme') || 'dark') : 'dark');
+
+  // Planetary Destinations across Mars
+  const selectedDestinationId = ref('jezero');
+  const destinations = ref(MARS_DESTINATIONS);
+  const currentDestination = computed(() =>
+    destinations.value.find((d) => d.id === selectedDestinationId.value) || destinations.value[0]
+  );
 
   // Route presentation snapshot (shallowRef to prevent Vue proxying of large point arrays)
   const routeData = shallowRef(null);
@@ -16,19 +27,32 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
 
   // Selected Start and Destination coordinates
   const startCoord = ref({
-    label: 'Start (Jezero South)',
-    lat: 18.370,
-    lon: 77.348,
+    label: 'Start (Jezero Delta)',
+    lat: 18.435,
+    lon: 77.425,
   });
 
   const goalCoord = ref({
-    label: 'Destination (Séítah Region)',
-    lat: 18.502,
-    lon: 77.522,
+    label: 'Destination (Neretva Region)',
+    lat: 18.490,
+    lon: 77.490,
   });
 
   // Current active picking target: 'start' | 'goal' | null
   const activePicker = ref(null);
+
+  // Live Navigation Simulation State (Google Maps driving guidance)
+  const isNavigating = ref(false);
+  const isNavigationPaused = ref(false);
+  const navigationSpeedMultiplier = ref(5); // 1x, 5x, 20x, 50x
+  const navigationProgress = ref(0.0); // 0.0 to 1.0
+  const navigationCurrentPoint = shallowRef(null);
+  const navigationRemainingDistM = ref(0);
+  const navigationHeadingDeg = ref(0);
+  const navigationCurrentSpeedMps = ref(1.2);
+  const navigationNextManeuver = ref('Head northeast toward Neretva Margin');
+  const navigationNextDistM = ref(350);
+  const cameraFollowMode = ref(true); // Follow rover in 3D chase mode
 
   // Modals state
   const isWelcomeOpen = ref(false);
@@ -44,11 +68,9 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
   // Layer list snapshot (including Explore-Mars Esri CTX and Viking MDIM Color)
   const layerStates = ref([
     { id: 'mars-basemap', name: 'Esri Viking Color Mosaic', visible: true, opacity: 100 },
-    { id: 'mars-hillshade', name: 'High-Res Color Shaded Relief', visible: true, opacity: 100 },
-    { id: 'mars-esri-ctx', name: 'Esri CTX 5m High-Res', visible: false, opacity: 55 },
-    { id: 'mars-slope', name: 'Slope Severity (<10° / 10–18° / >18°)', visible: false, opacity: 70 },
-    { id: 'mars-hazards', name: 'Mapped Hazards & Uncertainty', visible: false, opacity: 80 },
-    { id: 'mars-science', name: 'Science Targets (Perseverance)', visible: true, opacity: 100 },
+    { id: 'mars-esri-ctx', name: 'Caltech Murray Lab CTX 5m Global Mosaic', visible: true, opacity: 100 },
+    { id: 'mars-hazards', name: 'Mapped Road Hazards & Dunes', visible: true, opacity: 85 },
+    { id: 'mars-science', name: 'Science Targets & Waypoints', visible: true, opacity: 100 },
   ]);
 
   // Environmental & Safety Alerts (3 active)
@@ -195,6 +217,68 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
     isCanvasMaximized.value = !isCanvasMaximized.value;
   }
 
+  function toggleTheme() {
+    currentTheme.value = currentTheme.value === 'light' ? 'dark' : 'light';
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('theme-light', currentTheme.value === 'light');
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('mars_theme', currentTheme.value);
+    }
+  }
+
+  function setDestination(id) {
+    const dest = destinations.value.find((d) => d.id === id);
+    if (!dest) return;
+    selectedDestinationId.value = id;
+    if (dest.defaultStart) startCoord.value = { ...dest.defaultStart };
+    if (dest.defaultGoal) goalCoord.value = { ...dest.defaultGoal };
+    stopNavigation();
+    if (window.__marsController) {
+      window.__marsController.onDestinationChange(id);
+    }
+  }
+
+  function swapStartAndGoal() {
+    const tmp = { ...startCoord.value };
+    startCoord.value = { ...goalCoord.value };
+    goalCoord.value = tmp;
+    stopNavigation();
+    if (window.__marsController) {
+      window.__marsController.computeRoute();
+    }
+  }
+
+  function startNavigation() {
+    isNavigating.value = true;
+    isNavigationPaused.value = false;
+    navigationProgress.value = 0.0;
+    if (window.__marsController) {
+      window.__marsController.startTraverseNavigation();
+    }
+  }
+
+  function pauseNavigation() {
+    isNavigationPaused.value = !isNavigationPaused.value;
+  }
+
+  function stopNavigation() {
+    isNavigating.value = false;
+    isNavigationPaused.value = false;
+    navigationProgress.value = 0.0;
+    if (window.__marsController) {
+      window.__marsController.stopTraverseNavigation();
+    }
+  }
+
+  function setSpeedMultiplier(mult) {
+    navigationSpeedMultiplier.value = mult;
+  }
+
+  function toggleCameraFollow() {
+    cameraFollowMode.value = !cameraFollowMode.value;
+  }
+
   function setActiveTab(tab) {
     activeTab.value = tab;
   }
@@ -202,11 +286,26 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
   return {
     activeTab,
     isCanvasMaximized,
+    currentTheme,
+    selectedDestinationId,
+    destinations,
+    currentDestination,
     routeData,
     inspectedEntity,
     startCoord,
     goalCoord,
     activePicker,
+    isNavigating,
+    isNavigationPaused,
+    navigationSpeedMultiplier,
+    navigationProgress,
+    navigationCurrentPoint,
+    navigationRemainingDistM,
+    navigationHeadingDeg,
+    navigationCurrentSpeedMps,
+    navigationNextManeuver,
+    navigationNextDistM,
+    cameraFollowMode,
     isWelcomeOpen,
     isProvenanceOpen,
     cursorCoords,
@@ -225,6 +324,14 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
     setLayerVisibility,
     setLayerOpacity,
     toggleCanvasMaximized,
+    toggleTheme,
+    setDestination,
+    swapStartAndGoal,
+    startNavigation,
+    pauseNavigation,
+    stopNavigation,
+    setSpeedMultiplier,
+    toggleCameraFollow,
     setActiveTab,
   };
 });

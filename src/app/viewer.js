@@ -424,6 +424,10 @@ export function createApplicationViewer({
   );
   try {
     viewer.targetFrameRate = 60;
+    // Set resolution scale for ultra-sharp high-DPI displays (retina screens)
+    if (typeof window !== 'undefined') {
+      viewer.resolutionScale = Math.min(window.devicePixelRatio || 1.0, 2.0);
+    }
     // A phone pinch spans fewer screen pixels than desktop zoom gestures.
     // Keep Cesium's distance-aware zoom and collision limits, with less travel
     // required on touch-first screens. Mouse/trackpad sensitivity stays native.
@@ -437,6 +441,9 @@ export function createApplicationViewer({
       viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString('#a35835');
       viewer.scene.globe.enableLighting = false;
       viewer.scene.globe.showGroundAtmosphere = false;
+      // High-resolution tile streaming: lower SSE loads higher LOD tiles sooner, keeping zoom crisp
+      viewer.scene.globe.maximumScreenSpaceError = 1.25;
+      viewer.scene.globe.tileCacheSize = 1000;
     }
     if (viewer.scene.fog) {
       viewer.scene.fog.enabled = false;

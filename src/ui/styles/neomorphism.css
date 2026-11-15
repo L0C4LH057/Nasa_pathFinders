@@ -214,3 +214,347 @@
   font-size: 0.68rem;
   color: var(--neo-text-muted);
 }
+
+/* ==========================================================================
+   CLEANROOM LABORATORY LIGHT THEME (White / Slate Neomorphism)
+   ========================================================================== */
+
+html.theme-light,
+.theme-light {
+  /* Surface Palettes */
+  --neo-bg: #e8edf4;
+  --neo-card-bg: #f4f7fb;
+  --neo-card-elevated: #ffffff;
+  --neo-card-sunken: #e2e8f0;
+  --neo-border: rgba(15, 23, 42, 0.08);
+  --neo-border-glow: rgba(2, 132, 199, 0.35);
+
+  /* Dual Soft Shadows (White Highlight & Slate Shadow) */
+  --neo-shadow-card:
+    -5px -5px 12px rgba(255, 255, 255, 0.95),
+     6px 6px 16px rgba(166, 178, 196, 0.45);
+
+  --neo-shadow-card-hover:
+    -6px -6px 16px rgba(255, 255, 255, 1.0),
+     8px 8px 22px rgba(166, 178, 196, 0.55);
+
+  --neo-shadow-inset:
+    inset 3px 3px 6px rgba(166, 178, 196, 0.4),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+
+  --neo-shadow-btn:
+    -3px -3px 7px rgba(255, 255, 255, 0.9),
+     3px 3px 7px rgba(166, 178, 196, 0.4);
+
+  --neo-shadow-btn-pressed:
+    inset 2px 2px 5px rgba(166, 178, 196, 0.5),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+
+  /* Planetary Accents */
+  --neo-cyan: #0284c7;
+  --neo-cyan-glow: 0 0 10px rgba(2, 132, 199, 0.35);
+  --neo-orange: #ea580c;
+  --neo-orange-glow: 0 0 10px rgba(234, 88, 12, 0.35);
+  --neo-green: #059669;
+  --neo-green-glow: 0 0 8px rgba(5, 150, 105, 0.35);
+  --neo-red: #dc2626;
+  --neo-red-glow: 0 0 8px rgba(220, 38, 38, 0.35);
+  --neo-purple: #9333ea;
+
+  /* Typography */
+  --neo-text-primary: #0f172a;
+  --neo-text-secondary: #475569;
+  --neo-text-muted: #64748b;
+}
+
+/* Light Mode Comprehensive Component Overrides */
+html.theme-light body,
+html.theme-light .neo-dashboard-root {
+  background: var(--neo-bg) !important;
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .neo-navbar {
+  background: var(--neo-card-bg) !important;
+  border-bottom: 1px solid var(--neo-border) !important;
+  box-shadow: 0 3px 12px rgba(166, 178, 196, 0.4) !important;
+}
+
+html.theme-light .brand-app-title,
+html.theme-light .card-title,
+html.theme-light .neo-card-title,
+html.theme-light .route-title,
+html.theme-light .target-name,
+html.theme-light .crew-name,
+html.theme-light h1,
+html.theme-light h2,
+html.theme-light h3,
+html.theme-light h4 {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .brand-tagline,
+html.theme-light .stat-lbl,
+html.theme-light .picker-label,
+html.theme-light .field-label,
+html.theme-light .item-desc,
+html.theme-light .neo-text-muted,
+html.theme-light .neo-text-secondary {
+  color: var(--neo-text-secondary) !important;
+}
+
+html.theme-light .stat-val,
+html.theme-light .stat-value,
+html.theme-light .crew-role,
+html.theme-light .drug-name {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .nav-center-tabs {
+  background: var(--neo-card-sunken) !important;
+  box-shadow: inset 2px 2px 5px rgba(166, 178, 196, 0.45), inset -2px -2px 5px rgba(255, 255, 255, 0.85) !important;
+}
+
+html.theme-light .nav-tab-item {
+  color: var(--neo-text-secondary) !important;
+}
+
+html.theme-light .nav-tab-item:hover {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .nav-tab-item.active {
+  background: var(--neo-card-elevated) !important;
+  color: var(--neo-cyan) !important;
+  border-color: var(--neo-border) !important;
+  box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.95), 3px 3px 7px rgba(166, 178, 196, 0.4) !important;
+}
+
+html.theme-light .nav-action-btn,
+html.theme-light .avatar-circle {
+  background: var(--neo-card-elevated) !important;
+  color: var(--neo-text-primary) !important;
+  border: 1px solid var(--neo-border) !important;
+  box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.95), 3px 3px 7px rgba(166, 178, 196, 0.35) !important;
+}
+
+html.theme-light .nav-action-btn:hover {
+  border-color: var(--neo-cyan) !important;
+  color: var(--neo-cyan) !important;
+}
+
+html.theme-light .neo-card {
+  background: var(--neo-card-bg) !important;
+  border: 1px solid var(--neo-border) !important;
+  box-shadow: var(--neo-shadow-card) !important;
+}
+
+html.theme-light .neo-card:hover {
+  box-shadow: var(--neo-shadow-card-hover) !important;
+}
+
+html.theme-light .neo-sunken {
+  background: var(--neo-card-sunken) !important;
+  border: 1px solid rgba(15, 23, 42, 0.05) !important;
+  box-shadow: var(--neo-shadow-inset) !important;
+}
+
+html.theme-light .neo-btn {
+  background: var(--neo-card-elevated) !important;
+  color: var(--neo-text-primary) !important;
+  border-color: var(--neo-border) !important;
+  box-shadow: var(--neo-shadow-btn) !important;
+}
+
+html.theme-light .neo-btn:hover {
+  color: var(--neo-cyan) !important;
+  border-color: rgba(2, 132, 199, 0.35) !important;
+  box-shadow: -3px -3px 8px rgba(255, 255, 255, 1), 4px 4px 10px rgba(166, 178, 196, 0.5) !important;
+}
+
+html.theme-light .neo-btn:active,
+html.theme-light .neo-btn.active {
+  background: var(--neo-card-sunken) !important;
+  box-shadow: var(--neo-shadow-btn-pressed) !important;
+}
+
+html.theme-light .neo-btn-primary {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(2, 132, 199, 0.05) 100%) !important;
+  border-color: rgba(2, 132, 199, 0.5) !important;
+  color: var(--neo-cyan) !important;
+}
+
+html.theme-light select,
+html.theme-light input,
+html.theme-light .neo-select,
+html.theme-light .neo-input {
+  background: var(--neo-card-elevated) !important;
+  color: var(--neo-text-primary) !important;
+  border: 1px solid var(--neo-border) !important;
+  box-shadow: inset 1px 1px 3px rgba(166, 178, 196, 0.3), inset -1px -1px 3px rgba(255, 255, 255, 0.8) !important;
+}
+
+html.theme-light .stat-row {
+  background: rgba(15, 23, 42, 0.02) !important;
+  border-bottom: 1px solid var(--neo-border) !important;
+}
+
+html.theme-light .stat-row:hover {
+  background: rgba(2, 132, 199, 0.05) !important;
+}
+
+html.theme-light .protocol-table th {
+  background: var(--neo-card-sunken) !important;
+  color: var(--neo-text-secondary) !important;
+  border-bottom: 1px solid var(--neo-border) !important;
+}
+
+html.theme-light .protocol-table td {
+  color: var(--neo-text-primary) !important;
+  border-bottom: 1px solid var(--neo-border) !important;
+}
+
+html.theme-light .protocol-table tr:hover td {
+  background: rgba(2, 132, 199, 0.04) !important;
+}
+
+html.theme-light .stat-card,
+html.theme-light .step-item {
+  background: var(--neo-card-elevated) !important;
+  border-color: var(--neo-border) !important;
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .radial-gauge-track {
+  stroke: rgba(15, 23, 42, 0.08) !important;
+}
+
+html.theme-light .radial-gauge-val {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .radial-gauge-unit {
+  color: var(--neo-text-secondary) !important;
+}
+
+html.theme-light .alert-item-card {
+  background: var(--neo-card-elevated) !important;
+  border: 1px solid var(--neo-border) !important;
+  box-shadow: var(--neo-shadow-btn) !important;
+}
+
+html.theme-light .alert-title {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .alert-time {
+  color: var(--neo-text-muted) !important;
+}
+
+html.theme-light .alert-desc {
+  color: var(--neo-text-secondary) !important;
+}
+
+html.theme-light .hud-badge,
+html.theme-light .badge-sol {
+  background: var(--neo-card-sunken) !important;
+  border-color: var(--neo-border) !important;
+  color: var(--neo-cyan) !important;
+}
+
+html.theme-light .hud-pills-row {
+  background: var(--neo-card-bg) !important;
+  border-color: var(--neo-border) !important;
+}
+
+html.theme-light .hud-pill-lbl {
+  color: var(--neo-text-muted) !important;
+}
+
+html.theme-light .hud-pill-val {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .route-swap-btn,
+html.theme-light .coord-pick-btn {
+  background: var(--neo-card-elevated) !important;
+  border-color: var(--neo-border) !important;
+  color: var(--neo-text-secondary) !important;
+  box-shadow: var(--neo-shadow-btn) !important;
+}
+
+html.theme-light .route-swap-btn:hover,
+html.theme-light .coord-pick-btn:hover {
+  color: var(--neo-cyan) !important;
+  border-color: var(--neo-cyan) !important;
+}
+
+html.theme-light .route-swap-btn:active,
+html.theme-light .coord-pick-btn.active {
+  background: var(--neo-card-sunken) !important;
+  box-shadow: var(--neo-shadow-btn-pressed) !important;
+}
+
+html.theme-light .dest-trigger-btn {
+  background: var(--neo-card-elevated) !important;
+  border-color: var(--neo-border) !important;
+  color: var(--neo-text-primary) !important;
+  box-shadow: var(--neo-shadow-btn) !important;
+}
+
+html.theme-light .dest-trigger-btn:hover,
+html.theme-light .dest-trigger-btn.open {
+  border-color: var(--neo-cyan) !important;
+  color: var(--neo-cyan) !important;
+}
+
+html.theme-light .dest-dropdown-menu {
+  background: var(--neo-card-bg) !important;
+  border-color: var(--neo-border) !important;
+  box-shadow: 0 10px 25px rgba(166, 178, 196, 0.5) !important;
+}
+
+html.theme-light .dest-item:hover,
+html.theme-light .dest-item.selected {
+  background: rgba(2, 132, 199, 0.07) !important;
+}
+
+html.theme-light .dest-item-name {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .dest-item-desc {
+  color: var(--neo-text-secondary) !important;
+}
+
+html.theme-light .dest-item-coords {
+  color: var(--neo-text-muted) !important;
+}
+
+html.theme-light .nav-hud-banner {
+  background: rgba(244, 247, 251, 0.94) !important;
+  border-color: var(--neo-border) !important;
+  box-shadow: var(--neo-shadow-card) !important;
+}
+
+html.theme-light .maneuver-text {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .maneuver-dist {
+  color: var(--neo-cyan) !important;
+}
+
+html.theme-light .nav-hud-bottom {
+  background: rgba(244, 247, 251, 0.94) !important;
+  border-color: var(--neo-border) !important;
+  box-shadow: var(--neo-shadow-card) !important;
+}
+
+html.theme-light .hud-val {
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .hud-lbl {
+  color: var(--neo-text-secondary) !important;
+}
