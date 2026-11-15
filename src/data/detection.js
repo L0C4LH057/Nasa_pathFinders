@@ -358,7 +358,6 @@ export function initDetection(viewer, layers, onModeChange) {
 
   setDetectionStyle('normal');
   _syncSurfaceVisibility();
-  console.log('[Detection] Initialized');
 }
 
 /** Release the host lane and all retained detection runtime state. */
@@ -736,7 +735,6 @@ function _applyModeState() {
   }
 
   if (_onModeChange) _onModeChange(label);
-  console.log(`[Detection] Mode: ${label}`);
 }
 
 /**

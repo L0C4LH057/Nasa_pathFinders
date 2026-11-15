@@ -10,9 +10,24 @@ export function createMarsScienceLayer({ viewer, onSelectTarget }) {
   const scene = viewer.scene;
   billboardCollection = scene.primitives.add(new Cesium.BillboardCollection());
 
+  async function loadFeatures() {
+    try {
+      const res = await fetch('/api/mars/features');
+      if (res.ok && res.headers.get('content-type')?.includes('application/json')) {
+        return await res.json();
+      }
+    } catch {}
+    try {
+      const fallbackRes = await fetch('/mars-data/jezero_features.geojson');
+      if (fallbackRes.ok) {
+        return await fallbackRes.json();
+      }
+    } catch {}
+    return { features: [] };
+  }
+
   // Fetch science targets
-  fetch('/api/mars/features')
-    .then((r) => r.json())
+  loadFeatures()
     .then((data) => {
       targets = (data?.features || []).filter(
         (f) => f.properties?.category === 'science_target' || f.properties?.category === 'base_camp'

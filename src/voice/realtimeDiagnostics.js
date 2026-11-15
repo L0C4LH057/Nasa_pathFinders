@@ -18,6 +18,8 @@ function createDebugSessionId() {
 }
 
 export function postDebugLog(record) {
+  // In production / Mars Pathfinder standalone, disable debug log posts unless explicitly enabled
+  if (typeof window !== 'undefined' && !window.__GEV_DEBUG_LOG_ENABLED) return;
   try {
     const body = JSON.stringify(record);
     if (navigator.sendBeacon) {

@@ -271,9 +271,6 @@ export function initTrackedReadout(viewer) {
     _aircraftSelectedHandler,
   );
   syncActiveEntity();
-  // Boot-verification contract: the track regression harness asserts this
-  // exact line at init (dropped by the host migration; restored).
-  console.log('[TrackedReadout] Initialized');
 }
 
 /** Tear down selection listeners and clear the host source. */

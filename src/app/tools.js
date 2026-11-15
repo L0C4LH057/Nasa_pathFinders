@@ -12,6 +12,7 @@ import { applicationPinia } from '../ui/vueRuntime.js';
 import { initImageryBoxTool } from '../ui/imageryBoxTool.js';
 import { createRecentImageryPanel } from '../ui/recentImagery.js';
 import { createDataLibrary } from '../library/controller.js';
+import { createLibrarySource } from '../library/source.js';
 import { flyToLibraryExtent } from '../library/camera.js';
 import { createLibraryBrowser } from '../ui/libraryBrowser.js';
 import { useDataLibraryStore } from '../ui/stores/dataLibrary.js';
@@ -120,6 +121,7 @@ export function createApplicationTools({
   const dataLibrary = createDataLibrary({
     dataManager,
     services: localGeoJsonServices,
+    source: createLibrarySource({ entries: [], base: null }),
     getTileset: () => tileset,
     mapStackController,
     shareLink: styleManager.shareLinkManager,

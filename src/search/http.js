@@ -92,12 +92,13 @@ export function createHttpGeospatialProvider({
     async reverseGeocode(latitude, longitude, options) {
       // The browser key gates the provider without travelling with the
       // request: the proxy supplies the key Google actually sees.
-      if (resolveApiKey && !resolveApiKey()) return null;
+      if (!resolveApiKey?.() || !urls.reverse) return null;
       return normalizeGoogleReverse(
         await json(urls.reverse, { lat: latitude, lon: longitude }, options),
       );
     },
     async textSearch(query, { latitude, longitude, radiusM = 6000 }, options) {
+      if (!resolveApiKey?.() || !urls.textSearch) return [];
       return places(
         await json(
           urls.textSearch,
@@ -107,6 +108,7 @@ export function createHttpGeospatialProvider({
       );
     },
     async nearby({ latitude, longitude, radiusM = 250 }, options) {
+      if (!resolveApiKey?.() || !urls.nearby) return [];
       return places(
         await json(
           urls.nearby,

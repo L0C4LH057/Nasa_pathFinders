@@ -97,3 +97,15 @@
   3. Integrated Web Audio API frequency sweep oscillator ($440\text{ Hz} \to 880\text{ Hz} \to 1320\text{ Hz}$) on "ENTER MISSION" providing crisp sci-fi acoustic feedback without any external audio files.
   4. Synchronized atmospheric entry descent: `dist` dives from $4.6$ down to $1.07$, the `uEntry` heating glow shader blends in fiery orange plasma, and Cesium simultaneously initiates camera trajectory glide in the background, smoothly transitioning into the Mission Control dashboard.
   5. Added "Orbit View" header navigation button allowing operators to seamlessly return to the 3D rotating globe anytime. Added `?skip` query and `#app` hash bypass for developers and automated tests.
+
+## 17. Production VPS Deployment & Static Client Decoupling
+- **Problem**: When deploying `dist/` to an aaPanel VPS with Nginx, the Cesium globe appeared as a flat, blank brown sphere (`#a35835`) and the console logged `net::ERR_BLOCKED_BY_CLIENT` alongside 404s for `/api/openai/hud-summary`, `/api/library/catalog`, `/api/realtime/debug-log`, and `/api/google/nearby-places`.
+  1. `marsBasemapLayer.js` and `marsEsriCtxLayer.js` requested `/esri-mars/arcgis/rest/services/...`, an endpoint that only existed as a local Vite dev-server proxy plugin. On aaPanel Nginx, these requests 404'd, leaving Cesium with 0 tiles and rendering only the globe's fallback baseColor.
+  2. Residual Earth OSINT services from the foundation codebase attempted to poll Google Places, OpenAI summary status, and Earth library catalogs, resulting in 404s and ad-blocker blocks.
+- **Pattern / Solution**:
+  1. Update layer URLs to point directly to `https://astro.arcgis.com/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}` and `OnMars/CTX1/MapServer/tile/{z}/{y}/{x}`. Direct HTTPS requests natively return `Access-Control-Allow-Origin: *` for all valid LODs (0 to 12), ensuring 100% plug-and-play static hosting on aaPanel Nginx, Apache, Vercel, or Netlify with zero proxy setup required.
+  2. In `applicationShell.js`, conditionally mount `initDetection` and `initTrackedReadout` only when detectable Earth layers exist (`detectableLayers.length > 0`).
+  3. Guard `reverseGeocode`, `textSearch`, and `nearby` in `search/http.js` with `if (!resolveApiKey?.() || !urls.nearby) return []`, eliminating unwanted Earth Google requests.
+  4. Guard `source.getAvailability()` in `library/source.js` to return `{ server: false, availability }` immediately without fetch when `base` is null.
+  5. Provide static fallback GeoJSON (`/mars-data/jezero_features.geojson`) and safe JSON content-type parsing for hazards and science targets.
+

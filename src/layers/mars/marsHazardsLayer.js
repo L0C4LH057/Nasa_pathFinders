@@ -40,8 +40,23 @@ export function createMarsHazardsLayer({ viewer }) {
   let visible = true;
   let opacity = 0.85;
 
-  fetch('/api/mars/features')
-    .then((r) => r.json())
+  async function loadFeatures() {
+    try {
+      const res = await fetch('/api/mars/features');
+      if (res.ok && res.headers.get('content-type')?.includes('application/json')) {
+        return await res.json();
+      }
+    } catch {}
+    try {
+      const fallbackRes = await fetch('/mars-data/jezero_features.geojson');
+      if (fallbackRes.ok) {
+        return await fallbackRes.json();
+      }
+    } catch {}
+    return { features: [] };
+  }
+
+  loadFeatures()
     .then((data) => {
       const hazardFeatures = (data?.features || []).filter(
         (f) => f.geometry?.type === 'Polygon'

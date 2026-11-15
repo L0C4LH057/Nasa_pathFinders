@@ -540,27 +540,31 @@ export class StyleManager extends ShellFacade {
     );
 
     // Initialize detection overlay BEFORE style stages so the composite
-    // stage is first in the post-process pipeline
-    initDetection(
-      viewer,
-      [
-        trafficLayer,
-        flightsLayer,
-        militaryFlightsLayer,
-        localAdsbLayer,
-        satellitesLayer,
-        cctvLayer,
-        bikeshareLayer,
-        transitLayer,
-        aisLiveVesselsLayer,
-      ].filter(Boolean),
-      (modeLabel) => {
-        this._updateDetectionButton(modeLabel);
-      },
-    );
-    initTrackedReadout(viewer);
-    setDetectionStyle(this.activeStyle);
-    this._setDetectionDensity();
+    // stage is first in the post-process pipeline (only when detectable layers exist)
+    const detectableLayers = [
+      trafficLayer,
+      flightsLayer,
+      militaryFlightsLayer,
+      localAdsbLayer,
+      satellitesLayer,
+      cctvLayer,
+      bikeshareLayer,
+      transitLayer,
+      aisLiveVesselsLayer,
+    ].filter(Boolean);
+
+    if (detectableLayers.length > 0) {
+      initDetection(
+        viewer,
+        detectableLayers,
+        (modeLabel) => {
+          this._updateDetectionButton(modeLabel);
+        },
+      );
+      initTrackedReadout(viewer);
+      setDetectionStyle(this.activeStyle);
+      this._setDetectionDensity();
+    }
 
     this._initStages();
     this._initBloomSharpen();
