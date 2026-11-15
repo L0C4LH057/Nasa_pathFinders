@@ -343,6 +343,18 @@ html.theme-light .nav-action-btn:hover {
   color: var(--neo-cyan) !important;
 }
 
+html.theme-light .external-map-btn {
+  background: linear-gradient(135deg, rgba(0, 163, 204, 0.12), #ffffff) !important;
+  border-color: rgba(0, 163, 204, 0.35) !important;
+  color: var(--neo-text-primary) !important;
+}
+
+html.theme-light .external-map-btn:hover {
+  border-color: var(--neo-cyan) !important;
+  color: var(--neo-cyan) !important;
+  box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.95), 0 0 12px rgba(0, 163, 204, 0.3) !important;
+}
+
 html.theme-light .neo-card {
   background: var(--neo-card-bg) !important;
   border: 1px solid var(--neo-border) !important;

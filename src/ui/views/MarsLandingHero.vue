@@ -731,9 +731,28 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="hud-status-badge">
-          <span class="pulse-dot" aria-hidden="true"></span>
-          <span class="status-label">MISSION STATUS: ORBITAL STANDBY</span>
+        <div class="hud-top-right">
+          <a
+            href="https://salimmasud.github.io/nasa-challenge--MarsMap-2026/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="landing-external-map-btn"
+            title="Launch Interactive NASA Challenge Mars Map in a new window"
+          >
+            <svg viewBox="0 0 24 24" class="landing-btn-svg">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            <span>INTERACTIVE MAP</span>
+            <svg viewBox="0 0 24 24" class="landing-ext-arrow">
+              <path fill="currentColor" d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/>
+            </svg>
+          </a>
+
+          <div class="hud-status-badge">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span class="status-label">MISSION STATUS: ORBITAL STANDBY</span>
+          </div>
         </div>
       </div>
 
@@ -993,6 +1012,52 @@ onUnmounted(() => {
   font-size: clamp(9px, 1.1vw, 11px);
   letter-spacing: 0.18em;
   color: #94a3b8;
+}
+
+.hud-top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-external-map-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14, 165, 233, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: clamp(10px, 1.1vw, 11.5px);
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: #f0f9ff;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 16px rgba(14, 165, 233, 0.22);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.landing-external-map-btn:hover {
+  background: rgba(14, 165, 233, 0.32);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(56, 189, 248, 0.45);
+  transform: translateY(-1px);
+}
+
+.landing-btn-svg {
+  width: 14px;
+  height: 14px;
+  color: #38bdf8;
+}
+
+.landing-ext-arrow {
+  width: 11px;
+  height: 11px;
+  opacity: 0.8;
+  color: #7dd3fc;
 }
 
 .hud-status-badge {

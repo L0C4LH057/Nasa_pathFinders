@@ -327,6 +327,18 @@
 - [x] 24.3 Production Verification & Clean Console Audit <!-- id: 24.3 -->
   - [x] 24.3.1 Execute `npm run build` and verify bundle builds cleanly
   - [x] 24.3.2 Execute automated Puppeteer verification on production build simulating standalone static deployment (zero 404s, zero `ERR_BLOCKED_BY_CLIENT`, full photographic CTX surface rendered)
-- [ ] 24.4 Git Push & aaPanel VPS Deployment Guide <!-- id: 24.4 -->
-  - [ ] 24.4.1 Commit all changes and push to `origin main`
-  - [ ] 24.4.2 Provide comprehensive aaPanel Nginx configuration instructions and deployment steps
+- [x] 24.4 Git Push & aaPanel VPS Deployment Guide <!-- id: 24.4 -->
+  - [x] 24.4.1 Commit all changes and push to `origin main`
+  - [x] 24.4.2 Provide comprehensive aaPanel Nginx configuration instructions and deployment steps
+
+## Phase 25: Header Navigation Button for External Interactive NASA Challenge Map <!-- id: 25 -->
+
+- [x] 25.1 Implement Header Action Button in `SceneChromeView.vue` <!-- id: 25.1 -->
+  - [x] 25.1.1 Add styled external link button linking to `https://salimmasud.github.io/nasa-challenge--MarsMap-2026/`
+  - [x] 25.1.2 Ensure responsive placement, hover glow, zero emojis, and theme compatibility (dark & light)
+- [x] 25.2 Implement Header Link in `MarsLandingHero.vue` <!-- id: 25.2 -->
+  - [x] 25.2.1 Add companion interactive map link button in the Landing Page HUD top bar
+- [x] 25.3 Verification, Testing & Build <!-- id: 25.3 -->
+  - [x] 25.3.1 Build frontend with `npm run build`
+  - [x] 25.3.2 Verify button rendering, target attributes, and styling via automated Puppeteer test
+  - [x] 25.3.3 Commit and push to git remote `main`

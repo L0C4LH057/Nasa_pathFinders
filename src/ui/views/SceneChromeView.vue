@@ -187,6 +187,24 @@ onMounted(() => {
           <span>Orbit View</span>
         </button>
 
+        <!-- NASA Challenge Mars Map Link -->
+        <a
+          href="https://salimmasud.github.io/nasa-challenge--MarsMap-2026/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-action-btn external-map-btn"
+          title="Open Interactive NASA Challenge Mars Map in a new window"
+        >
+          <svg viewBox="0 0 24 24" class="btn-svg">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+          </svg>
+          <span>Interactive Map</span>
+          <svg viewBox="0 0 24 24" class="btn-ext-icon">
+            <path fill="currentColor" d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/>
+          </svg>
+        </a>
+
         <button class="nav-action-btn" @click="openProvenance" title="Planetary Dataset Provenance">
           <svg viewBox="0 0 24 24" class="btn-svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="currentColor" d="M12 17h-1v-5h2v5zm0-7h-1V8h2v2z"/></svg>
           <span>Provenance</span>
@@ -638,6 +656,27 @@ onMounted(() => {
 .nav-action-btn:hover {
   border-color: #00d2ff;
   color: #00d2ff;
+}
+
+.external-map-btn {
+  text-decoration: none;
+  border-color: rgba(0, 210, 255, 0.28);
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.12), #151a28);
+  color: #e2e8f0;
+}
+
+.external-map-btn:hover {
+  border-color: #00d2ff;
+  color: #00d2ff;
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-ext-icon {
+  width: 10px;
+  height: 10px;
+  opacity: 0.8;
+  margin-left: -1px;
 }
 
 .avatar-chip {
