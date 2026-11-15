@@ -82,3 +82,18 @@
   2. Never store 4xx/5xx transparent fallbacks into the LRU `tileCache`. Only valid 200 OK image buffers should be cached, allowing transient network glitches to recover on the next frame.
   3. Set `globe.baseColor = '#a35835'` (warm Martian ochre) so that even during network latency, tiles never flash black.
   4. Completely purge synthetic single-tile procedural hillshade images from active imagery providers. Let the authentic, uniform, photorealistic Caltech Murray Lab CTX Global Mosaic (~5m/px) render seamlessly everywhere on Mars with zero clay patches.
+
+## 16. WebGL Landing Globe Integration & Cinematic Atmospheric Entry Transition
+- **Problem**: The project needed an immersive, full-screen interactive 3D landing page based on AstraMap, allowing users to inspect the red planet in orbit before diving into Mission Control, while improving upon the prototype with multi-destination targeting, real-time orbital flight telemetry, zero external audio asset dependencies, and synchronized Cesium handoff.
+- **Pattern / Solution**:
+  1. Implemented [MarsLandingHero.vue](file:///home/localhost/projects/colab/NASA/pathfinder/src/ui/views/MarsLandingHero.vue) with a lightweight custom WebGL pipeline:
+     - 16,384-triangle UV sphere geometry ($128 \times 64$).
+     - Luminance-gradient bump mapping and multi-band atmospheric rim glow shaders.
+     - 950-point twinkling starfield background.
+     - Equirectangular $2048 \times 1024$ photographic Mars texture loaded from `public/mars-data/mars_2k.jpg`.
+  2. Implemented multi-destination targeting right on the landing page:
+     - User can click any of the 6 planetary destinations (Jezero Crater, Olympus Mons, Valles Marineris, Gale Crater, Gusev Crater, Meridiani Planum).
+     - Clicking a destination smoothly rotates the 3D globe to bring that site's exact longitude ($-\text{lon}$) and latitude ($\text{lat}$) into front view.
+  3. Integrated Web Audio API frequency sweep oscillator ($440\text{ Hz} \to 880\text{ Hz} \to 1320\text{ Hz}$) on "ENTER MISSION" providing crisp sci-fi acoustic feedback without any external audio files.
+  4. Synchronized atmospheric entry descent: `dist` dives from $4.6$ down to $1.07$, the `uEntry` heating glow shader blends in fiery orange plasma, and Cesium simultaneously initiates camera trajectory glide in the background, smoothly transitioning into the Mission Control dashboard.
+  5. Added "Orbit View" header navigation button allowing operators to seamlessly return to the 3D rotating globe anytime. Added `?skip` query and `#app` hash bypass for developers and automated tests.

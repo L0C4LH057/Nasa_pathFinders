@@ -54,7 +54,13 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
   const navigationNextDistM = ref(350);
   const cameraFollowMode = ref(true); // Follow rover in 3D chase mode
 
-  // Modals state
+  // Modals & Landing Hero state
+  const shouldSkipLanding = typeof window !== 'undefined' && (
+    new URLSearchParams(window.location.search).has('skip') ||
+    window.location.hash.includes('skip') ||
+    window.location.hash.includes('app')
+  );
+  const isLandingOpen = ref(!shouldSkipLanding);
   const isWelcomeOpen = ref(false);
   const isProvenanceOpen = ref(false);
 
@@ -279,6 +285,14 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
     cameraFollowMode.value = !cameraFollowMode.value;
   }
 
+  function openLanding() {
+    isLandingOpen.value = true;
+  }
+
+  function closeLanding() {
+    isLandingOpen.value = false;
+  }
+
   function setActiveTab(tab) {
     activeTab.value = tab;
   }
@@ -306,6 +320,9 @@ export const useMarsStore = defineStore('mars-pathfinder', () => {
     navigationNextManeuver,
     navigationNextDistM,
     cameraFollowMode,
+    isLandingOpen,
+    openLanding,
+    closeLanding,
     isWelcomeOpen,
     isProvenanceOpen,
     cursorCoords,

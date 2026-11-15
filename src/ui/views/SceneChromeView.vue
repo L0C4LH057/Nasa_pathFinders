@@ -5,6 +5,7 @@ import RenderFailure from './panels/RenderFailure.vue';
 import DatasetProvenanceModal from './panels/DatasetProvenanceModal.vue';
 
 // Sub-components
+import MarsLandingHero from './MarsLandingHero.vue';
 import MissionOverviewCard from './cards/MissionOverviewCard.vue';
 import AlertsCard from './cards/AlertsCard.vue';
 import RouteAnalysisCard from './cards/RouteAnalysisCard.vue';
@@ -68,6 +69,9 @@ onMounted(() => {
 
 <template>
   <div class="neo-dashboard-root" :class="{ 'canvas-is-maximized': isMaximized }">
+    <!-- 3D Mars Landing Hero (AstraMap Integration) -->
+    <MarsLandingHero v-if="store.isLandingOpen" />
+
     <!-- Top Mission Control Navigation Header -->
     <header class="neo-navbar">
       <div class="nav-left">
@@ -172,6 +176,14 @@ onMounted(() => {
             <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 2v2m0 16v2M4 12H2m20 0h-2m-2.93-7.07l-1.41 1.41m-9.32 9.32l-1.41 1.41m0-12.14l1.41 1.41m9.32 9.32l1.41 1.41"/>
           </svg>
           <span>{{ store.currentTheme === 'light' ? 'Dark' : 'Light' }}</span>
+        </button>
+
+        <button class="nav-action-btn orbit-view-btn" @click="store.openLanding()" title="Return to 3D Orbital Globe View">
+          <svg viewBox="0 0 24 24" class="btn-svg">
+            <circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <ellipse cx="12" cy="12" rx="10" ry="3.5" fill="none" stroke="currentColor" stroke-width="1.3" transform="rotate(-20 12 12)"/>
+          </svg>
+          <span>Orbit View</span>
         </button>
 
         <button class="nav-action-btn" @click="openProvenance" title="Planetary Dataset Provenance">

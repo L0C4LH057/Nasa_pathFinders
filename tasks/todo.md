@@ -293,20 +293,21 @@
   - [x] 21.4.2 Execute Puppeteer verification script capturing Meridiani Planum high-res zoom and smooth camera transition
   - [x] 21.4.3 Document findings in `tasks/lessons.md` and brain artifacts
 
-## Phase 22: Eliminate Artificial Clay Rectangles & Fix Deep Zoom Black Tiles (LOD 12 Upsampling) <!-- id: 22 -->
+## Phase 23: 3D Mars Landing Hero Integration & Enhancement (from AstraMap) <!-- id: 23 -->
 
-- [x] 22.1 Fix Deep Zoom Black Tiles via Level 12 Native Upsampling <!-- id: 22.1 -->
-  - [x] 22.1.1 Clamp `marsEsriCtxLayer.js` to `maximumLevel: 12` (the verified maximum pre-rendered LOD on `OnMars/CTX1/MapServer`)
-  - [x] 22.1.2 Enable Cesium native tile upsampling beyond Level 12 so zooming in down to 10m never requests non-existent LODs 13–17 (which 400 and turn black)
-  - [x] 22.1.3 Set `viewer.scene.globe.baseColor` to warm Martian basalt `#a35835` to prevent black void flashes
-  - [x] 22.1.4 In `server/standalone/mars-tile-proxy.js`, avoid poisoning LRU tile cache with transparent fallback buffers on transient upstream 4xx/5xx errors
-- [x] 22.2 Purge Artificial Clay Rectangles on Destinations <!-- id: 22.2 -->
-  - [x] 22.2.1 Completely eliminate synthetic single-tile relief imagery providers in `marsHillshadeLayer.js`
-  - [x] 22.2.2 Remove `mars-hillshade` from `layerStates` in `marsStore.js` and remove `setDestinationRelief` calls in `marsController.js`
-  - [x] 22.2.3 Allow the authentic, uniform, photorealistic Caltech Murray Lab CTX photographic mosaic (~5m/px) to render seamlessly across all planetary destinations
-  - [x] 22.2.4 Ensure Gusev, Olympus Mons, Valles Marineris, Meridiani, Gale, and Jezero display continuous real photographic terrain with zero artificial clay patches
-- [x] 22.3 Verification & Multi-Destination Deep Zoom Evidence <!-- id: 22.3 -->
-  - [x] 22.3.1 Build frontend (`npm run build`) bundles 894 modules in 13.38s with 0 errors
-  - [x] 22.3.2 Execute automated test capturing deep zooms on Gusev, Olympus Mons, Valles Marineris, Meridiani Planum, Jezero, and Gale
-  - [x] 22.3.3 Confirm zero black tiles, zero clay patches, and 100% clean console logs (0 HTTP 500s, 0 console errors)
-  - [x] 22.3.4 Document architectural solution in `tasks/lessons.md`
+- [x] 23.1 Extract and architect AstraMap 3D WebGL Mars Landing Engine <!-- id: 23.1 -->
+  - [x] 23.1.1 Inspect AstraMap custom WebGL pipeline (sphere geometry, bump mapping shader, starfield, atmospheric glow)
+  - [x] 23.1.2 Create `src/ui/views/MarsLandingHero.vue` encapsulating the full-screen interactive 3D globe
+  - [x] 23.1.3 Store Mars 2K texture asset cleanly in `public/mars-data/mars_2k.jpg` or embedded data URI
+- [x] 23.2 Landing Hero UX Enhancements & Mission Integration <!-- id: 23.2 -->
+  - [x] 23.2.1 Add Target Destination Selector directly on the Landing Hero (Jezero Crater, Gale, Olympus Mons, Valles Marineris, Gusev, Meridiani)
+  - [x] 23.2.2 Add Real-Time Flight Dynamics HUD (Entry Trajectory Angle, Target Sub-Solar Longitude, Orbital Velocity, Thermal Shield Temp)
+  - [x] 23.2.3 Add Sci-Fi UI Web Audio acoustic confirmation chirp on "ENTER MISSION" (zero external asset dependencies)
+  - [x] 23.2.4 Synchronize dramatic entry descent with Cesium camera `flyToDestination`
+  - [x] 23.2.5 Support `?skip` query param and `#app` hash for instant bypass
+  - [x] 23.2.6 Add "Orbit View" button in header navigation to reopen the 3D globe anytime
+- [x] 23.3 Verification & Automated Testing <!-- id: 23.3 -->
+  - [x] 23.3.1 Build frontend (`npm run build`) bundles 896 modules in 14.27s with zero errors
+  - [x] 23.3.2 Execute automated Puppeteer test verifying globe rendering, rotation, target pick, and transition to Mission Control
+  - [x] 23.3.3 Capture screenshot artifacts of the enhanced Landing Page and transition
+  - [x] 23.3.4 Document architecture in `tasks/lessons.md`
