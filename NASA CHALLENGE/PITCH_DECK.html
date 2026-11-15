@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARS PATHFINDER — 10-Slide Pitch Deck</title>
+  <style>
+    :root {
+      --bg: #070d19;
+      --card: #0c1526;
+      --head: #101c33;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --cyan: #38bdf8;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .deck-bar {
+      height: 50px;
+      padding: 0 18px;
+      background: var(--head);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .deck-bar strong { color: #f8fafc; font-size: 13px; }
+    .deck-controls { display: flex; align-items: center; gap: 8px; }
+    .btn {
+      background: #131f35;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn.primary { background: rgba(56,189,248,0.18); border-color: rgba(56,189,248,0.5); color: var(--cyan); }
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      min-height: 0;
+    }
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1060px;
+      height: 100%;
+      max-height: 600px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 38px;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+    .slide.active { display: flex; }
+    .slide-kicker { font-size: 12px; font-weight: 700; color: var(--cyan); letter-spacing: 1px; text-transform: uppercase; }
+    .slide h1 { margin: 8px 0 14px; font-size: 32px; line-height: 1.2; color: #f8fafc; }
+    .slide-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      flex: 1;
+      align-items: center;
+    }
+    ul.bullets {
+      margin: 0;
+      padding-left: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+    .visual-box {
+      height: 100%;
+      min-height: 250px;
+      background: #091120;
+      border: 1px dashed rgba(56,189,248,0.45);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .visual-box strong { color: var(--cyan); display: block; margin-bottom: 6px; font-size: 14px; }
+    .script-box {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #091120;
+      border-left: 3px solid var(--green);
+      border-radius: 0 8px 8px 0;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+    .script-box.hidden { display: none; }
+    .script-time { color: var(--green); font-weight: 700; margin-right: 6px; font-family: monospace; }
+    .slide-foot { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding-top: 10px; border-top: 1px solid var(--border); }
+    @media print {
+      body { height: auto; overflow: visible; background: #fff; color: #0f172a; }
+      .deck-bar { display: none; }
+      .stage { display: block; padding: 0; }
+      .slide { display: flex !important; page-break-after: always; max-height: none; height: 92vh; background: #fff; color: #0f172a; border-color: #cbd5e1; box-shadow: none; margin-bottom: 20px; }
+      .slide h1 { color: #0f172a; }
+      .visual-box, .script-box { background: #f8fafc; color: #1e293b; border-color: #94a3b8; }
+    }
+  </style>
+</head>
+<body>
+  <header class="deck-bar">
+    <strong>MARS PATHFINDER &mdash; 10-Slide Pitch Deck (Volunteering Team, Kano, Nigeria)</strong>
+    <div class="deck-controls">
+      <button class="btn" id="prevBtn">&larr; Prev</button>
+      <span id="counter" style="font-size:12px;font-family:monospace;">1 / 10</span>
+      <button class="btn primary" id="nextBtn">Next &rarr;</button>
+      <button class="btn" id="toggleNotesBtn">Toggle Script</button>
+      <button class="btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage"></main>
+
+  <script>
+    const slides = [
+      {
+        kicker: "Slide 1 • Title & Hook",
+        title: "MARS PATHFINDER: Turning NASA Orbital Data into Astronaut Survival",
+        bullets: [
+          "Real-time EVA survival guide for Jezero Crater (18.38° N, 77.58° E).",
+          "Built for astronauts walking in pressurized spacesuits on Mars.",
+          "Connects 7 NASA datasets with live A* hazard routing.",
+          "Volunteering Team — Kano, Nigeria | NASA Space Apps 2026."
+        ],
+        visualTitle: "Visual: Hero Screenshot — 3D Mars Globe",
+        visualDesc: "Full-bleed dark-navy view of our 3D Mars Globe centered on Jezero Crater with NASA badge & team credits.",
+        time: "[0:00–0:12]",
+        script: "Hello judges! We are the Volunteering Team from Kano, Nigeria. When NASA sends astronauts to Mars, looking at a map from orbit isn't enough—they need to survive the walk. Meet Mars Pathfinder, our real-time survival and route-planning guide for Jezero Crater."
+      },
+      {
+        kicker: "Slide 2 • The Problem",
+        title: "The \"Last-Mile\" Marswalk Gap",
+        bullets: [
+          "Mars Trek shows orbital terrain, not human walking survival.",
+          "Straight-line paths cross deadly >15° crater cliffs and sand traps.",
+          "-62°C cold, near-vacuum, and radiation threaten every step.",
+          "Limited spacesuit oxygen makes wrong turns fatal."
+        ],
+        visualTitle: "Visual: Straight Line vs. Martian Hazards",
+        visualDesc: "Split graphic showing dashed red straight line hitting a 30° HiRISE cliff + -62°C / 748 Pa / 0.38g hazard badges.",
+        time: "[0:12–0:24]",
+        script: "Existing tools like Mars Trek are built for orbital sightseeing, not for an astronaut walking on the ground. On Mars, a straight line can take you straight off a 30-degree cliff or trap you in loose sand—while your oxygen runs out in -62°C cold and near-vacuum."
+      },
+      {
+        kicker: "Slide 3 • Our Solution",
+        title: "Mars Pathfinder: Interactive 3D-to-2D EVA Survival System",
+        bullets: [
+          "Seamless transition from 360° 3D Mars Globe to 2D map.",
+          "Built specifically for Perseverance's exploration zone in Jezero Crater.",
+          "Computes safest walkable routes, exact walk time, and oxygen burn.",
+          "Includes one-click Solar Storm emergency return routing."
+        ],
+        visualTitle: "Visual: Full 2D Jezero Mission Control Screenshot",
+        visualDesc: "Wide screenshot of the 3-column dashboard: Left NASA Layers, Center Map, Right xEMU PLSS Gauges.",
+        time: "[0:24–0:36]",
+        script: "So we built Mars Pathfinder—a tactical survival computer designed specifically for astronauts at Perseverance's landing site in Jezero Crater. It connects a 360-degree 3D Mars globe directly to a 2D surface Mission Control that plans safe walks and monitors spacesuit life support."
+      },
+      {
+        kicker: "Slide 4 • Live Product Walkthrough",
+        title: "Inside Mission Control: 7 NASA Layers & Target Inspector",
+        bullets: [
+          "Roll Mars 360° infinitely, then zoom into 25 cm HiRISE.",
+          "Toggle 7 NASA layers: cliffs, sand, minerals, weather, contours.",
+          "Click anywhere to inspect CRISM minerals like Magnesium Carbonate.",
+          "Flexible Origin lets astronauts start from any drop-off point."
+        ],
+        visualTitle: "Visual: Annotated App Callouts",
+        visualDesc: "Highlight (1) 3D Mars Globe toggle, (2) Left 7-layer pill toggles, (3) Terrain & Science Inspector showing Magnesium Carbonate.",
+        time: "[0:36–0:50]",
+        script: "Let's look at what's on screen. You can roll our 3D Mars Globe freely 360 degrees in any direction, then zoom into 25-centimeter HiRISE imagery. On the left, astronauts toggle 7 NASA layers—from cliff hazards to biosignature minerals like Magnesium Carbonate—and click anywhere to inspect terrain or set a custom starting point."
+      },
+      {
+        kicker: "Slide 5 • Smart A* Routing",
+        title: "Smart A* Routing: Detouring Around Deadly Cliffs & Sand",
+        bullets: [
+          "65×65 A* grid blocks impassable >15° HiRISE cliff faces.",
+          "Penalizes loose THEMIS sand traps (5.0x) and cold shadows.",
+          "Example route: 3.05 km, +0.5 km safety detour, 1h 04m.",
+          "Live cost sliders let mission planners tune terrain risk."
+        ],
+        visualTitle: "Visual: Jezero A* Detour Map Zoom",
+        visualDesc: "Close-up of the cyan safe A* path curving around the red HiRISE cliff scarp beside the dashed red straight line.",
+        time: "[0:50–1:04]",
+        script: "Instead of drawing a dangerous straight line, our A* pathfinder automatically detours around >15° HiRISE cliffs and loose THEMIS sand traps. On this real Jezero traverse, it adds a half-kilometer safety detour—3.05 km total, taking 1 hour and 4 minutes at Mars 0.38g gravity—keeping the crew out of danger."
+      },
+      {
+        kicker: "Slide 6 • Spacesuit Life Support",
+        title: "Real-Time xEMU PLSS Life-Support & Oxygen Go/No-Go",
+        bullets: [
+          "Models NASA xEMU PLSS backpack (530 L / 3,000 psi).",
+          "Tracks Oxygen Supply, Suit Battery, Radiation, and 4.3 psi Pressure.",
+          "Computes metabolic O2 burn (20.1 kJ/L) from terrain slope.",
+          "Reserve slider flashes red ABORT if round-trip O2 fails."
+        ],
+        visualTitle: "Visual: Right-Side PLSS Gauges Close-Up",
+        visualDesc: "Close-up of Post-Trip O2 & Suit Battery circular SVG rings, PLSS Reserve slider, and GO FOR EVA / ABORT banner.",
+        time: "[1:04–1:18]",
+        script: "On the right, our xEMU PLSS simulator tracks the astronaut's backpack in real time: Oxygen Supply, Suit Battery, Radiation Dose, and 4.3 psi Suit Pressure. Using NASA metabolic physics, it calculates exact oxygen burn for the route. If the crew's oxygen reserve is too low for a safe return, it immediately flashes a red ABORT warning."
+      },
+      {
+        kicker: "Slide 7 • Emergency Response",
+        title: "One-Click Survival: Solar Storm (SPE) Emergency Reroute",
+        bullets: [
+          "Simulates a sudden +48 mSv/hr Solar Particle Event.",
+          "Sounds Web Audio alarm and halts scientific sampling immediately.",
+          "Plots fastest cliff-safe return route to Base Camp airlock.",
+          "Updates radiation dose (mSv) and crew heart rate live."
+        ],
+        visualTitle: "Visual: Solar Storm Alarm Modal + Red Return Path",
+        visualDesc: "Screenshot of Critical Space Weather Alarm modal overlaid on the red emergency A* return route to Octavia Base Camp.",
+        time: "[1:18–1:30]",
+        script: "And what if space weather turns deadly? One click on Solar Storm simulates a +48 mSv/hr Solar Particle Event. The system sounds an alarm, cancels science stops, and automatically plots the fastest cliff-safe A* route back to the shielded Base Camp airlock."
+      },
+      {
+        kicker: "Slide 8 • Authentic NASA Data",
+        title: "Grounded in 7 Multi-Mission NASA Datasets & Standards",
+        bullets: [
+          "MRO HiRISE & MOLA: 25 cm imagery, >15° cliffs, 10m contours.",
+          "THEMIS & CRISM: Sand traction and Carbonate/Clay biosignatures.",
+          "Mars 2020 MEDA/RAD: -62.4°C air, -114.2°C shadows, 0.24 mSv/day.",
+          "NASA-STD-3001 & xEMU: 0.80 m/s pace, 293 W, 20.1 kJ/L O2."
+        ],
+        visualTitle: "Visual: 7-Dataset Scientific Matrix",
+        visualDesc: "Clean grid pairing MRO HiRISE, CRISM, THEMIS, MOLA, MEDA/RAD, and NASA-STD-3001 with exact numbers.",
+        time: "[1:30–1:42]",
+        script: "Nothing here is guesswork. Every layer and formula comes from authentic NASA sources: MRO HiRISE and MOLA topography, THEMIS sand inertia, CRISM mineralogy, Perseverance MEDA/RAD weather and radiation, and NASA-STD-3001 spacesuit metabolic standards."
+      },
+      {
+        kicker: "Slide 9 • Technical Architecture",
+        title: "Zero-Latency Client-Side Architecture on GitHub Pages",
+        bullets: [
+          "100% client-side HTML5, CSS3, and modular Vanilla JavaScript.",
+          "Leaflet.js powers 2D HiRISE tiles and 7 GeoJSON overlays.",
+          "Three.js renders 3D Mars with unrestricted 360° Quaternion Ball-Roll.",
+          "Zero backend servers—instant global deployment on GitHub Pages."
+        ],
+        visualTitle: "Visual: 4-Stage Architecture Flow",
+        visualDesc: "NASA/USGS Data → A* Solver & PLSS Physics (Vanilla JS) → Leaflet 2D + Three.js 3D → GitHub Pages.",
+        time: "[1:42–1:50]",
+        script: "Under the hood, Mars Pathfinder is 100% client-side—built with HTML5, CSS3, Leaflet for 2D mapping, Three.js for our 360-degree globe, and custom JavaScript A* and life-support engines. Zero servers needed, hosted live on GitHub Pages."
+      },
+      {
+        kicker: "Slide 10 • Impact & Roadmap",
+        title: "Scaling From Jezero Crater to Artemis & Mars",
+        bullets: [
+          "Ready to adapt for NASA Artemis lunar South Pole EVAs.",
+          "Roadmap: live suit telemetry feeds and multi-astronaut convoy routing.",
+          "Open-source educational and mission-planning tool for global teams.",
+          "Try live: salimmasud.github.io/nasa-challenge--MarsMap-2026/"
+        ],
+        visualTitle: "Visual: Closing Banner & Live Demo QR/URL",
+        visualDesc: "Live URL salimmasud.github.io/nasa-challenge--MarsMap-2026/ + Artemis Lunar & Mars Convoy roadmap icons.",
+        time: "[1:50–2:00]",
+        script: "Our architecture scales directly to NASA's Artemis lunar South Pole missions and future crewed Marswalks—with next steps for live suit telemetry and multi-astronaut routing. Try our live demo at salimmasud.github.io/nasa-challenge--MarsMap-2026/. Thank you!"
+      }
+    ];
+
+    const stage = document.getElementById('stage');
+    let current = 0;
+    let showNotes = true;
+
+    slides.forEach((s, i) => {
+      const el = document.createElement('section');
+      el.className = 'slide' + (i === 0 ? ' active' : '');
+      el.innerHTML = `
+        <div>
+          <div class="slide-kicker">${s.kicker}</div>
+          <h1>${s.title}</h1>
+        </div>
+        <div class="slide-grid">
+          <ul class="bullets">${s.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+          <div class="visual-box"><strong>${s.visualTitle}</strong><span>${s.visualDesc}</span></div>
+        </div>
+        <div class="script-box">
+          <span class="script-time">${s.time}</span>"${s.script}"
+        </div>
+        <div class="slide-foot">
+          <span>MARS PATHFINDER • Jezero Crater EVA Tactical Guide</span>
+          <span>Volunteering Team — Kano, Nigeria • Slide ${i + 1} / ${slides.length}</span>
+        </div>
+      `;
+      stage.appendChild(el);
+    });
+
+    const slideEls = [...document.querySelectorAll('.slide')];
+    const counter = document.getElementById('counter');
+
+    function go(idx) {
+      current = (idx + slides.length) % slides.length;
+      slideEls.forEach((el, i) => el.classList.toggle('active', i === current));
+      counter.textContent = `${current + 1} / ${slides.length}`;
+    }
+
+    document.getElementById('prevBtn').onclick = () => go(current - 1);
+    document.getElementById('nextBtn').onclick = () => go(current + 1);
+    document.getElementById('toggleNotesBtn').onclick = () => {
+      showNotes = !showNotes;
+      document.querySelectorAll('.script-box').forEach(b => b.classList.toggle('hidden', !showNotes));
+    };
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') go(current + 1);
+      if (e.key === 'ArrowLeft') go(current - 1);
+    });
+  </script>
+</body>
+</html>

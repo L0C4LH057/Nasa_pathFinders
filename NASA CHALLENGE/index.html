@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARS PATHFINDER // Jezero Crater EVA Tactical Guide</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23070d19'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%2338bdf8' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23ef4444'/%3E%3C/svg%3E">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <!-- Google Fonts: Inter + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="mc-shell">
+
+  <!-- ====================================================================== -->
+  <!-- TOP HEADER BAR                                                         -->
+  <!-- ====================================================================== -->
+  <header class="mc-topbar">
+    <div class="tb-brand">
+      <div class="nasa-seal">NASA</div>
+      <div class="tb-meta">
+        <span class="tb-org">NASA / JPL</span>
+        <span class="tb-unit">ARES-V // JEZERO TACTICAL NAV</span>
+      </div>
+      <div class="tb-title-wrap">
+        <h1>MARS PATHFINDER</h1>
+        <span class="tb-sub">EXPLORE &middot; PLAN &middot; MONITOR &middot; SURVIVE</span>
+      </div>
+    </div>
+
+    <div class="tb-telemetry">
+      <div class="tb-stat"><span class="k">SOL</span><span class="v" id="hudSol">1324</span></div>
+      <div class="tb-stat"><span class="k">LMST / MTC</span><span class="v" id="hudMTC">14:42:08</span></div>
+      <div class="tb-stat"><span class="k">MEDA TEMP</span><span class="v amber" id="hudEnvTemp">-62&deg;C</span></div>
+      <div class="tb-stat"><span class="k">PRESSURE</span><span class="v" id="hudPressure">748 Pa</span></div>
+      <div class="tb-stat"><span class="k">DUST (TAU)</span><span class="v" id="hudDustTau">0.58</span></div>
+    </div>
+
+    <div class="tb-controls">
+      <button class="pill-btn pill-danger" id="btnSolarStorm" title="Simulate Solar Particle Event (SPE)">
+        &#9888; SOLAR STORM (SPE)
+      </button>
+      <button class="pill-btn pill-cyan" id="btnFlyJezero" title="Switch to 2D Jezero Crater HiRISE Map">
+        &#8644; JEZERO EVA (2D)
+      </button>
+      <button class="pill-btn pill-slate" id="btnFlyOrbital" title="Switch to 3D Spherical Mars Globe">
+        &#127760; 3D MARS GLOBE
+      </button>
+      <button class="pill-btn pill-slate" id="btnToggleAudio" title="Toggle Tactical Audio">
+        <span id="audioIcon">&#128266;</span> SFX: ON
+      </button>
+      <button class="pill-btn pill-slate" id="btnExportEVA" title="Export Mission Plan JSON">
+        &#128203; EXPORT
+      </button>
+    </div>
+  </header>
+
+  <!-- ====================================================================== -->
+  <!-- MAIN 3-COLUMN WORKSPACE                                                -->
+  <!-- ====================================================================== -->
+  <div class="mc-workspace">
+
+    <!-- LEFT SIDEBAR (275px): NASA Mission Layers (Pill Toggles) + Basemap -->
+    <aside class="mc-col-left" aria-label="NASA Mission Layers">
+      <section class="mc-card layers-panel">
+        <div class="mc-card-head">
+          <h2>NASA MISSION LAYERS</h2>
+        </div>
+        <div class="mc-card-body layers-list">
+
+          <div class="layer-toggle-card accent-red">
+            <div class="lt-top">
+              <label class="pill-switch">
+                <input type="checkbox" id="layerHazards" checked>
+                <span class="pill-slider red"></span>
+              </label>
+              <div class="lt-info">
+                <div class="lt-name">Slope &amp; Cliff Hazards (&gt;15&deg;&ndash;20&deg;)</div>
+                <div class="lt-src">MRO / HiRISE DTM</div>
+              </div>
+            </div>
+            <input type="range" class="layer-range red" id="opacityHazards" min="0" max="100" value="75" title="Layer opacity">
+          </div>
+
+          <div class="layer-toggle-card accent-orange">
+            <div class="lt-top">
+              <label class="pill-switch">
+                <input type="checkbox" id="layerThemis" checked>
+                <span class="pill-slider orange"></span>
+              </label>
+              <div class="lt-info">
+                <div class="lt-name">Thermal Inertia &amp; Sand Traps</div>
+                <div class="lt-src">Mars Odyssey / THEMIS</div>
+              </div>
+            </div>
+            <input type="range" class="layer-range orange" id="opacityThemis" min="0" max="100" value="70" title="Layer opacity">
+          </div>
+
+          <div class="layer-toggle-card accent-teal">
+            <div class="lt-top">
+              <label class="pill-switch">
+                <input type="checkbox" id="layerMinerals" checked>
+                <span class="pill-slider teal"></span>
+              </label>
+              <div class="lt-info">
+                <div class="lt-name">Mineralogy &amp; Biosignatures</div>
+                <div class="lt-src">MRO / CRISM MTR3</div>
+              </div>
+            </div>
+            <input type="range" class="layer-range teal" id="opacityMinerals" min="0" max="100" value="65" title="Layer opacity">
+          </div>
+
+          <div class="layer-toggle-card accent-purple">
+            <div class="lt-top">
+              <label class="pill-switch">
+                <input type="checkbox" id="layerThermal" checked>
+                <span class="pill-slider purple"></span>
+              </label>
+              <div class="lt-info">
+                <div class="lt-name">Cold Shadows &amp; GCR Radiation</div>
+                <div class="lt-src">Mars 2020 / MEDA &amp; RAD</div>
+              </div>
+            </div>
+            <input type="range" class="layer-range purple" id="opacityThermal" min="0" max="100" value="70" title="Layer opacity">
+          </div>
+
+          <div class="layer-toggle-card accent-gold">
+            <div class="lt-top">
+              <label class="pill-switch">
+                <input type="checkbox" id="layerTraverse" checked>
+                <span class="pill-slider gold"></span>
+              </label>
+              <div class="lt-info">
+                <div class="lt-name">Perseverance Ground-Truth Path</div>
+                <div class="lt-src">Mars 2020 / Rover Nav</div>
+              </div>
+            </div>
+            <input type="range" class="layer-range gold" id="opacityTraverse" min="0" max="100" value="90" title="Layer opacity">
+          </div>
+
+          <div class="layer-toggle-card accent-cyan">
+            <div class="lt-top">
+              <label class="pill-switch">
+                <input type="checkbox" id="layerWaypoints" checked>
+                <span class="pill-slider cyan"></span>
+              </label>
+              <div class="lt-info">
+                <div class="lt-name">Base Camp &amp; Science Targets</div>
+                <div class="lt-src">NASA / Jezero Targets</div>
+              </div>
+            </div>
+            <input type="range" class="layer-range cyan" id="opacityWaypoints" min="0" max="100" value="100" title="Layer opacity">
+          </div>
+
+          <div class="layer-toggle-card accent-blue">
+            <div class="lt-top">
+              <label class="pill-switch">
+                <input type="checkbox" id="layerContours" checked>
+                <span class="pill-slider blue"></span>
+              </label>
+              <div class="lt-info">
+                <div class="lt-name">Topographic 10m Contours</div>
+                <div class="lt-src">MGS / MOLA + HiRISE</div>
+              </div>
+            </div>
+            <input type="range" class="layer-range blue" id="opacityContours" min="0" max="100" value="85" title="Layer opacity">
+          </div>
+
+        </div>
+      </section>
+
+      <section class="mc-card basemap-panel">
+        <div class="mc-card-head">
+          <h2>ORBITAL BASEMAP</h2>
+        </div>
+        <div class="mc-card-body">
+          <div class="basemap-static">
+            <span class="radio-dot"></span>
+            <span>NASA HiRISE 25cm (Jezero)</span>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- CENTER STAGE: Uncluttered Map / 3D Globe + 2-Card Bottom Strip -->
+    <div class="mc-col-center">
+      <main class="mc-card map-canvas-card">
+        <div id="map" class="tactical-map"></div>
+        <div id="globeView" class="tactical-globe"></div>
+
+        <div class="map-footer-bar">
+          <span id="hudCursorCoords">LAT: 18.4447&deg; N | LON: 77.4508&deg; E</span>
+          <span class="sep">|</span>
+          <span>3.72 m/s&sup2; MARS GRAVITY</span>
+          <span class="sep">|</span>
+          <span>ELLIPSOID 3396.19&times;3376.20 km</span>
+        </div>
+      </main>
+
+      <div class="center-bottom-strip">
+        <!-- Bottom-Left: Elevation & Slope Profile -->
+        <section class="mc-card">
+          <div class="mc-card-head">
+            <h2>ELEVATION &amp; SLOPE PROFILE</h2>
+            <div class="slope-legend">
+              <span class="lg-dot green"></span>Safe (&lt;8&deg;)
+              <span class="lg-dot amber"></span>Moderate (8&deg;-15&deg;)
+              <span class="lg-dot red"></span>Cliff (&gt;15&deg;)
+            </div>
+          </div>
+          <div class="mc-card-body elev-body">
+            <canvas id="elevationCanvas" class="elevation-canvas" width="420" height="125"></canvas>
+          </div>
+        </section>
+
+        <!-- Bottom-Right: Terrain & Science Inspector -->
+        <section class="mc-card">
+          <div class="mc-card-head">
+            <h2>TERRAIN &amp; SCIENCE INSPECTOR</h2>
+            <span class="badge-chip">CLICK MAP</span>
+          </div>
+          <div class="mc-card-body insp-body">
+            <div class="insp-row"><span>Coordinates:</span><strong id="inspCoords">18.4447&deg; N, 77.4508&deg; E</strong></div>
+            <div class="insp-row"><span>Elevation:</span><strong id="inspElev">-2548 m</strong></div>
+            <div class="insp-row"><span>Slope:</span><strong id="inspSlope">2.4&deg; (Safe Flat)</strong></div>
+            <div class="insp-row"><span>Soil Traction:</span><strong id="inspSoil">Consolidated Bedrock</strong></div>
+            <div class="insp-row"><span>Mineralogy:</span><strong class="accent" id="inspMineral">Mg-Carbonate / Clay</strong></div>
+            <div class="insp-row"><span>Microclimate:</span><strong id="inspTemp">-62.4&deg;C (Nominal)</strong></div>
+            <div class="insp-row"><span>Radiation:</span><strong id="inspRad">0.24 mSv/day</strong></div>
+            <div class="insp-row"><span>Provenance:</span><strong class="dim" id="inspProv">MRO / HiRISE / M2020</strong></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR (310px): Spacesuit PLSS Gauges, Route & Pathfinder, Advisories -->
+    <aside class="mc-col-right" aria-label="Spacesuit Telemetry & Pathfinder">
+
+      <!-- Card 1: Spacesuit Survival HUD (Large Circular PLSS Gauges) -->
+      <section class="mc-card">
+        <div class="mc-card-head">
+          <h2>SPACESUIT SURVIVAL HUD (xEMU PLSS)</h2>
+          <span class="status-badge normal" id="suitStatusBadge">NOMINAL</span>
+        </div>
+        <div class="mc-card-body hud-gauges-body">
+          <div class="dual-rings">
+            <div class="ring-unit">
+              <div class="ring-lbl">POST-TRIP O&#8322; (PLSS)</div>
+              <div class="ring-box">
+                <svg viewBox="0 0 88 88" class="ring-svg">
+                  <circle class="ring-track" cx="44" cy="44" r="35"></circle>
+                  <circle class="ring-val o2" id="ringO2Circle" cx="44" cy="44" r="35" stroke-dasharray="219.91" stroke-dashoffset="28"></circle>
+                </svg>
+                <div class="ring-num" id="meterO2Val">87%</div>
+              </div>
+              <div class="ring-sub" id="meterO2Sub">0.94 L/min &bull; 4.3 psi</div>
+            </div>
+
+            <div class="ring-unit">
+              <div class="ring-lbl">SUIT BATTERY</div>
+              <div class="ring-box">
+                <svg viewBox="0 0 88 88" class="ring-svg">
+                  <circle class="ring-track" cx="44" cy="44" r="35"></circle>
+                  <circle class="ring-val batt" id="ringBattCircle" cx="44" cy="44" r="35" stroke-dasharray="219.91" stroke-dashoffset="31"></circle>
+                </svg>
+                <div class="ring-num" id="meterBatteryVal">86%</div>
+              </div>
+              <div class="ring-sub">185W Heater Load</div>
+            </div>
+          </div>
+
+          <div class="plss-reserve-strip">
+            <div class="reserve-head">
+              <span>Current PLSS O&#8322; Reserve</span>
+              <strong id="valCurrentO2">100% (530 L &bull; 3000 psi)</strong>
+            </div>
+            <input type="range" id="sliderCurrentO2" min="10" max="100" step="5" value="100">
+          </div>
+
+          <div class="o2-verdict nominal" id="o2GoNoGoBanner">
+            GO FOR EVA &mdash; Sufficient PLSS O&#8322; for round-trip
+          </div>
+
+          <!-- Hidden linear bars kept for full app.js compatibility -->
+          <div style="display:none;">
+            <div id="meterO2Fill"></div>
+            <div id="meterBatteryFill"></div>
+            <div id="meterRadFill"></div>
+            <span id="meterRadVal"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card 2: Route Analysis & Flexible Origin/Destination Pathfinder -->
+      <section class="mc-card">
+        <div class="mc-card-head">
+          <h2>ROUTE &amp; PATHFINDER</h2>
+          <div class="head-mini-btns">
+            <button type="button" class="mini-icon-btn" id="btnOpenCalcModal" title="How It's Calculated">&#9432;</button>
+            <button type="button" class="mini-icon-btn" id="btnOpenTuningModal" title="A* Cost Model Tuning">&#9881;</button>
+          </div>
+        </div>
+        <div class="mc-card-body route-body">
+          <div class="click-mode-switch" role="group" aria-label="Map Click Mode">
+            <button type="button" class="mode-chip active" id="btnClickModeDest">&#127919; Click: Target</button>
+            <button type="button" class="mode-chip" id="btnClickModeOrigin">&#128681; Click: Origin</button>
+          </div>
+
+          <div class="route-selects">
+            <div class="rs-field">
+              <label for="routeOrigin">Origin</label>
+              <select id="routeOrigin" class="aero-select">
+                <option value="base_camp">Base Camp (Octavia E. Butler Landing)</option>
+                <option value="kodiak">Western Delta Front (Kodiak Butte)</option>
+                <option value="neretva">Neretva Vallis Inflow Channel</option>
+                <option value="margin">Carbonate Margin Unit</option>
+                <option value="seitah">S&eacute;&iacute;tah Dune &amp; Boulder Field</option>
+                <option value="belva">Belva Impact Crater Rim</option>
+                <option value="custom_origin">Custom Map Drop-Off</option>
+              </select>
+            </div>
+            <div class="rs-field">
+              <label for="routeDestination">Destination</label>
+              <select id="routeDestination" class="aero-select">
+                <option value="kodiak" selected>Western Delta Front (Kodiak Butte)</option>
+                <option value="base_camp">Base Camp (Octavia E. Butler Landing)</option>
+                <option value="neretva">Neretva Vallis Inflow Channel</option>
+                <option value="margin">Carbonate Margin Unit</option>
+                <option value="seitah">S&eacute;&iacute;tah Dune &amp; Boulder Field</option>
+                <option value="belva">Belva Impact Crater Rim</option>
+                <option value="custom_dest">Custom Map Target</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="route-btn-row">
+            <button class="pill-btn pill-cyan flex-1" id="btnCalculateRoute">&#9889; Plot A*</button>
+            <button class="pill-btn pill-slate" id="btnSwapRoute" title="Swap Origin &amp; Destination">&#8644;</button>
+            <button class="pill-btn pill-slate" id="btnClearRoute">Reset</button>
+          </div>
+
+          <div class="route-kpis-grid">
+            <div class="rk-box"><span class="rk-l">TOTAL DISTANCE</span><span class="rk-v" id="statDistance">3.49 <span class="unit">km</span></span></div>
+            <div class="rk-box"><span class="rk-l">EST. WALK TIME</span><span class="rk-v" id="statTime">58 mins</span></div>
+            <div class="rk-box"><span class="rk-l">ELEVATION GAIN</span><span class="rk-v" id="statIncline">+61 <span class="unit">m</span></span></div>
+            <div class="rk-box"><span class="rk-l">CUMULATIVE DOSE</span><span class="rk-v" id="statRadiation">0.112 <span class="unit">mSv</span></span></div>
+            <div class="rk-box"><span class="rk-l">HEART RATE</span><span class="rk-v" id="statHeartRate">86 bpm</span></div>
+            <div class="rk-box"><span class="rk-l">METABOLIC / RT O&#8322;</span><span class="rk-v"><span id="statMetabolic">298 W</span> &bull; <span id="statRoundTripO2">78%</span></span></div>
+            <div class="rk-box span-2"><span class="rk-l">DETOUR / MAX SLOPE</span><span class="rk-v"><span id="statDetour">+0.74 km</span> &bull; <span id="statMaxSlope">2.8&deg;</span></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card 3: Tactical Hazard Advisories -->
+      <section class="mc-card advisories-card">
+        <div class="mc-card-head">
+          <h2>TACTICAL HAZARD ADVISORIES</h2>
+        </div>
+        <div class="mc-card-body">
+          <div class="advisory-log" id="advisoryLog">
+            <div class="log-entry log-safe">
+              <span class="log-time">[14:42:08]</span>
+              <span class="log-msg">A* Navigation: Safe route established.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- MODALS: How It's Calculated, A* Cost Tuning, Solar Storm Emergency     -->
+  <!-- ====================================================================== -->
+  <div class="aero-modal" id="calcModal">
+    <div class="aero-modal-box">
+      <div class="aero-modal-head">
+        <h3>&#9432; NASA Standards &amp; Calculation Methodology</h3>
+        <button type="button" class="close-x" id="btnCloseCalcModal">&times;</button>
+      </div>
+      <div class="aero-modal-body">
+        <p><strong>Kilometers (Distance):</strong> Sum of Mars-ellipsoid Haversine distances (R = 3,396.19 km) across every A* path step, avoiding &gt;15&deg; cliffs.</p>
+        <p><strong>Estimated Walk Time:</strong> Distance &divide; Speed using NASA's Mars 0.38g pressurized suit nominal pace of <strong>0.80 m/s (2.88 km/h)</strong> (<em>NASA EVA ConOps / MKIII Analog</em>), reduced on slopes &gt; 4&deg;.</p>
+        <p><strong>Temperature:</strong> Driven by <strong>Mars 2020 MEDA</strong> Jezero Crater telemetry (<strong>-62&deg;C</strong> nominal; <strong>-110&deg;C</strong> inside purple Cryogenic Cold Shadow zones, adding +35% suit heater drain).</p>
+        <p><strong>xEMU PLSS Oxygen:</strong> Based on <em>NASA/TM-20205008709</em> (<strong>530 L / 0.757 kg</strong> tank at 3,000 psi, 4.3 psi pure O&#8322; loop, 8.0-hr nominal EVA) and <em>NASA-STD-3001 / HIDH</em> (293 W / 1,000 BTU/hr baseline at <strong>20.1 kJ/L O&#8322;</strong>).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="aero-modal" id="tuningModal">
+    <div class="aero-modal-box">
+      <div class="aero-modal-head">
+        <h3>&#9881; A* Cost Model Tuning (Slope &amp; Traction)</h3>
+        <button type="button" class="close-x" id="btnCloseTuningModal">&times;</button>
+      </div>
+      <div class="aero-modal-body">
+        <div class="tuning-row">
+          <label for="sliderSlopePenalty">Slope Penalty (k): <strong id="valSlopePenalty">0.14</strong></label>
+          <input type="range" id="sliderSlopePenalty" min="0.02" max="0.40" step="0.02" value="0.14">
+        </div>
+        <div class="tuning-row">
+          <label for="sliderSandPenalty">Sand Trap Penalty: <strong id="valSandPenalty">5.0x</strong></label>
+          <input type="range" id="sliderSandPenalty" min="1.0" max="10.0" step="0.5" value="5.0">
+        </div>
+        <div class="tuning-row">
+          <label for="sliderThermalPenalty">Cold Shadow Penalty: <strong id="valThermalPenalty">2.2x</strong></label>
+          <input type="range" id="sliderThermalPenalty" min="1.0" max="6.0" step="0.2" value="2.2">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency Space Weather Modal -->
+  <div class="emergency-modal" id="emergencyModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="flashing-alarm">&#128680;</span>
+        <h2>CRITICAL SPACE WEATHER ALARM: SOLAR PARTICLE EVENT (SPE)</h2>
+      </div>
+      <div class="modal-body">
+        <p class="alert-desc">
+          Perseverance MEDA/RAD sensor detected an abrupt energetic proton flux spike:
+          <strong>+48 mSv/hr</strong>. Extreme ionizing radiation storm and atmospheric dust squall imminent.
+        </p>
+        <div class="emergency-metrics">
+          <div class="em-box">
+            <div class="em-lbl">TIME TO PEAK FLUX</div>
+            <div class="em-val">18 MINUTES</div>
+          </div>
+          <div class="em-box">
+            <div class="em-lbl">SAFEST SHELTER</div>
+            <div class="em-val">OCTAVIA BASE CAMP AIRLOCK</div>
+          </div>
+        </div>
+        <p class="alert-action">
+          Automated Emergency A* Reroute engaged: Scientific sampling aborted. Plotting the fastest return corridor with cliff-fall protection.
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button class="pill-btn pill-danger" id="btnConfirmEmergency">
+          EXECUTE EMERGENCY RETURN PROTOCOL
+        </button>
+        <button class="pill-btn pill-slate" id="btnDismissEmergency">
+          STAND DOWN ALERT
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries: Three.js + Leaflet.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Application Core Modules -->
+  <script src="js/jezero-data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/pathfinding.js"></script>
+  <script src="js/mars-globe.js"></script>
+  <script src="js/telemetry.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -16,6 +16,7 @@ import LifeSupportCard from './cards/LifeSupportCard.vue';
 import InCanvasControls from './cards/InCanvasControls.vue';
 import DestinationSelector from './cards/DestinationSelector.vue';
 import LiveNavigationCard from './cards/LiveNavigationCard.vue';
+import ElevationProfileCard from './cards/ElevationProfileCard.vue';
 
 const store = useMarsStore();
 
@@ -200,6 +201,11 @@ onMounted(() => {
       </div>
     </header>
 
+    <!-- Prototype Safety Boundary Banner -->
+    <div class="prototype-safety-banner">
+      <span><strong>ASTRAMAP · RESEARCH PROTOTYPE:</strong> Decision-support tool only — not flight-certified, not a real spacesuit monitor, and not a substitute for NASA Mission Control. Resource &amp; medical values are simulated.</span>
+    </div>
+
     <!-- Main Dashboard Container -->
     <main class="dashboard-scrollable-area">
       <!-- 1. MISSION CONTROL TAB VIEW (DEFAULT) -->
@@ -229,6 +235,11 @@ onMounted(() => {
             <AlertsCard />
             <ScienceTargetCard />
           </div>
+        </section>
+
+        <!-- ELEVATION PROFILE ROW -->
+        <section class="dashboard-row elevation-row" :class="{ 'hide-when-maximized': isMaximized }">
+          <ElevationProfileCard />
         </section>
 
         <!-- BOTTOM ROW: Pharmaceutical & Medical | Crew Health | Life-Support Monitoring -->
@@ -326,6 +337,33 @@ onMounted(() => {
         <div class="dedicated-header">
           <h2>Environmental Control &amp; Life-Support Systems (ECLSS)</h2>
           <button class="neo-btn" @click="setActiveTab('mission-control')">&larr; Return to Mission Control</button>
+        </div>
+
+        <!-- What-If Scenario Simulator (matches AstraMap ECLSS simulator) -->
+        <div class="scenario-bar neo-card">
+          <span class="scenario-lbl">What-if scenarios (simulated):</span>
+          <div class="scenario-btns">
+            <button
+              class="neo-btn scenario-btn"
+              :class="{ active: store.activeLifeSupportScenario === 'nominal' }"
+              @click="store.setLifeSupportScenario('nominal')"
+            >Nominal</button>
+            <button
+              class="neo-btn scenario-btn"
+              :class="{ active: store.activeLifeSupportScenario === 'co2' }"
+              @click="store.setLifeSupportScenario('co2')"
+            >Scrubber Degraded</button>
+            <button
+              class="neo-btn scenario-btn"
+              :class="{ active: store.activeLifeSupportScenario === 'leak' }"
+              @click="store.setLifeSupportScenario('leak')"
+            >Cabin Leak</button>
+            <button
+              class="neo-btn scenario-btn"
+              :class="{ active: store.activeLifeSupportScenario === 'water' }"
+              @click="store.setLifeSupportScenario('water')"
+            >Water Shortage</button>
+          </div>
         </div>
         <div class="dedicated-grid">
           <div class="grid-left">
@@ -917,5 +955,46 @@ onMounted(() => {
   border-radius: 4px;
   color: #ff6b35;
   font-family: var(--neo-font-mono, monospace);
+}
+
+.prototype-safety-banner {
+  background: rgba(245, 158, 11, 0.1);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.28);
+  color: #fcd34d;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-align: center;
+  padding: 4px 16px;
+}
+
+.elevation-row {
+  width: 100%;
+}
+
+.scenario-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.scenario-lbl {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.scenario-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.scenario-btn.active {
+  border-color: #00d2ff;
+  color: #00d2ff;
+  background: rgba(0, 210, 255, 0.14);
 }
 </style>

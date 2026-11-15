@@ -51,7 +51,7 @@ function setSubCategory(cat) {
       </div>
 
       <!-- Main Pharma Content -->
-      <div class="pharma-body">
+      <div v-if="activeSubCategory === 'inventory'" class="pharma-body">
         <div class="item-summary">
           <div class="med-thumb-wrap neo-sunken">
             <svg viewBox="0 0 24 24" class="bottle-svg">
@@ -84,6 +84,22 @@ function setSubCategory(cat) {
           <button class="view-inventory-link" @click="store.setActiveTab('pharma')">
             View Inventory &rarr;
           </button>
+        </div>
+      </div>
+
+      <!-- Crew Health Quick Summary -->
+      <div v-else-if="activeSubCategory === 'crew-health'" class="subtab-list neo-sunken">
+        <div class="subtab-row"><span>Commander</span><span class="font-mono">{{ store.crewHealth.name }}</span></div>
+        <div class="subtab-row"><span>Heart Rate / SpO₂</span><span class="font-mono">{{ store.crewHealth.vitals.heartRate }} bpm · {{ store.crewHealth.vitals.spo2 }}%</span></div>
+        <div class="subtab-row"><span>Blood Pressure</span><span class="font-mono">{{ store.crewHealth.vitals.bp }} mmHg</span></div>
+        <div class="subtab-row"><span>Core Temp</span><span class="font-mono">{{ store.crewHealth.vitals.temp }} °C ({{ store.crewHealth.status }})</span></div>
+      </div>
+
+      <!-- EVA Medical Kit Readiness -->
+      <div v-else class="subtab-list neo-sunken">
+        <div v-for="kit in store.pharmaInventory.medicalKit" :key="kit.name" class="subtab-row">
+          <span>{{ kit.name }}</span>
+          <span class="font-mono">{{ kit.qty }} · {{ kit.status }}</span>
         </div>
       </div>
     </div>
@@ -147,6 +163,34 @@ function setSubCategory(cat) {
   background: #151a28;
   color: #00d2ff;
   box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.04), 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.subtab-list {
+  padding: 10px 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subtab-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 5px;
+}
+
+.subtab-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.font-mono {
+  font-family: var(--neo-font-mono, monospace);
+  color: #38bdf8;
 }
 
 .pharma-body {

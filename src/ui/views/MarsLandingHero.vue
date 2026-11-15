@@ -15,6 +15,15 @@ const activeDestId = ref(store.selectedDestinationId || 'jezero');
 const destinations = MARS_DESTINATIONS;
 const currentDest = computed(() => destinations.find((d) => d.id === activeDestId.value) || destinations[0]);
 
+const teamMembers = [
+  { name: 'SM TECH', code: 'AST-01', top: '20%', left: '24%' },
+  { name: 'LOKALHOST', code: 'AST-02', top: '26%', left: '20%' },
+  { name: 'RUQAYYAH', code: 'AST-03', top: '32%', left: '16%' },
+  { name: 'AMAMAH', code: 'AST-04', top: '39%', left: '17%' },
+  { name: 'HASSANA', code: 'AST-05', top: '33%', left: '32%' },
+  { name: 'NAFISAH', code: 'AST-06', top: '40%', left: '30%' },
+];
+
 // WebGL & Animation state
 let gl = null;
 let raf = null;
@@ -202,8 +211,8 @@ function buf(data, type) {
 
 function initGL() {
   const cv = canvasRef.value;
-  gl = cv.getContext('webgl', { antialias: true, alpha: false, powerPreference: 'high-performance' }) ||
-       cv.getContext('experimental-webgl');
+  gl = cv.getContext('webgl', { antialias: true, alpha: true, powerPreference: 'high-performance' }) ||
+       cv.getContext('experimental-webgl', { alpha: true });
   if (!gl) throw new Error('WebGL unavailable');
 
   R.pm = prog(VS, FS);
@@ -307,7 +316,7 @@ function resize() {
 function draw(time) {
   if (!gl) return;
   gl.viewport(0, 0, cw, ch);
-  gl.clearColor(0.012, 0.013, 0.017, 1);
+  gl.clearColor(0.0, 0.0, 0.0, 0.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   gl.disable(gl.DEPTH_TEST);
@@ -421,6 +430,7 @@ function frame(now) {
 
 // Target selection: smooth rotation to destination coordinates
 function selectDestination(destId) {
+  if (destId !== 'jezero') return;
   activeDestId.value = destId;
   store.setDestination(destId);
 
@@ -671,6 +681,30 @@ onUnmounted(() => {
       <p>3D WebGL acceleration is unavailable. The mission console remains fully operational.</p>
     </div>
 
+    <!-- Blueprint Grid + Orbital Asteroid Belt & Moons Layer -->
+    <div class="cosmic-blueprint-grid" aria-hidden="true"></div>
+    <svg class="orbital-belt-svg" viewBox="0 0 1440 810" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- Sweeping Asteroid Belt Arcs -->
+      <ellipse cx="720" cy="400" rx="640" ry="135" fill="none" stroke="rgba(186, 230, 253, 0.10)" stroke-width="1" stroke-dasharray="3 9" transform="rotate(-11 720 400)"/>
+      <g fill="#7c6c5d" opacity="0.72">
+        <circle cx="150" cy="560" r="3.2"/><circle cx="195" cy="548" r="2.1"/><circle cx="240" cy="575" r="4.0"/>
+        <circle cx="290" cy="530" r="2.6"/><circle cx="345" cy="590" r="3.4"/><circle cx="410" cy="605" r="2.3"/>
+        <circle cx="1060" cy="510" r="3.1"/><circle cx="1115" cy="495" r="4.5"/><circle cx="1175" cy="472" r="2.8"/>
+        <circle cx="1230" cy="445" r="3.8"/><circle cx="1285" cy="410" r="5.2"/><circle cx="1335" cy="385" r="2.7"/>
+        <circle cx="980" cy="245" r="2.4"/><circle cx="1055" cy="235" r="3.1"/><circle cx="1135" cy="222" r="2.2"/>
+      </g>
+      <!-- Orbiting Moons (Phobos & Deimos) -->
+      <defs>
+        <radialGradient id="moonGrad" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#f1f5f9"/>
+          <stop offset="65%" stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#334155"/>
+        </radialGradient>
+      </defs>
+      <circle cx="342" cy="488" r="18" fill="url(#moonGrad)" opacity="0.92"/>
+      <circle cx="1005" cy="252" r="13" fill="url(#moonGrad)" opacity="0.88"/>
+    </svg>
+
     <!-- Vignette & Atmospheric Scrim -->
     <div class="landing-vignette" aria-hidden="true"></div>
     <div class="landing-scrim" aria-hidden="true"></div>
@@ -691,8 +725,8 @@ onUnmounted(() => {
               <text x="48" y="47" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle">NASA</text>
             </svg>
             <div class="hud-brand-text">
-              <span class="hud-main-title">MARS PATHFINDER</span>
-              <span class="hud-subtitle">PLANETARY EXPLORATION &amp; TRAVERSAL SYSTEM</span>
+              <span class="hud-main-title">ASTRAMAP <span class="brand-sep">&bull;</span> MARS PATHFINDER</span>
+              <span class="hud-subtitle">NASA SPACE APPS CHALLENGE 2026 &bull; PLANETARY TRAVERSAL SYSTEM</span>
             </div>
           </div>
         </div>
@@ -701,6 +735,43 @@ onUnmounted(() => {
           <span class="pulse-dot" aria-hidden="true"></span>
           <span class="status-label">MISSION STATUS: ORBITAL STANDBY</span>
         </div>
+      </div>
+
+      <!-- Floating Team AstraMap Asteroid Nodes -->
+      <div class="team-asteroids-layer" aria-label="Team AstraMap Members">
+        <div
+          v-for="(member, idx) in teamMembers"
+          :key="member.code"
+          class="asteroid-node"
+          :class="{ 'label-right': idx >= 4 }"
+          :style="{ top: member.top, left: member.left }"
+        >
+          <span v-if="idx < 4" class="asteroid-label">{{ member.name }} ({{ member.code }})</span>
+          <svg viewBox="0 0 40 36" class="asteroid-rock" aria-hidden="true">
+            <path
+              d="M11 4 L26 3 L36 13 L33 27 L21 34 L8 30 L3 18 Z"
+              fill="url(#rockGrad)"
+              stroke="rgba(255,255,255,0.22)"
+              stroke-width="1"
+            />
+            <circle cx="15" cy="14" r="3" fill="rgba(0,0,0,0.25)"/>
+            <circle cx="24" cy="22" r="2.2" fill="rgba(0,0,0,0.2)"/>
+            <defs>
+              <linearGradient id="rockGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#c4a484"/>
+                <stop offset="55%" stop-color="#7c634d"/>
+                <stop offset="100%" stop-color="#3b2d22"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span v-if="idx >= 4" class="asteroid-label">{{ member.name }} ({{ member.code }})</span>
+        </div>
+      </div>
+
+      <!-- Jezero Crater Target Reticle on Globe -->
+      <div class="jezero-globe-pin" aria-hidden="true">
+        <span class="pin-label">Jezero Crater</span>
+        <span class="pin-rings"><i></i></span>
       </div>
 
       <!-- Mid-Right: Live Orbital Flight Dynamics Card -->
@@ -732,6 +803,7 @@ onUnmounted(() => {
       <div class="hud-bottom">
         <!-- Bottom Left Telemetry -->
         <div class="hud-bottom-left">
+          <div class="bl-line bl-team">TEAM ASTRAMAP | SPACE APPS 2026</div>
           <div class="bl-line"><span class="bl-tag">TARGET:</span> MARS (IAU 2015:49900)</div>
           <div class="bl-line"><span class="bl-tag">SYSTEM:</span> SOL / INNER SYSTEM</div>
           <div class="bl-line"><span class="bl-tag">DATUM:</span> MOLA TOPOGRAPHIC 0M</div>
@@ -748,8 +820,10 @@ onUnmounted(() => {
                 :key="d.id"
                 class="dest-pill"
                 :class="{ active: activeDestId === d.id }"
-                @click.stop="selectDestination(d.id)"
-                :title="d.subtitle"
+                :disabled="d.id !== 'jezero'"
+                :aria-disabled="d.id !== 'jezero'"
+                @click.stop="d.id === 'jezero' && selectDestination(d.id)"
+                :title="d.id === 'jezero' ? d.subtitle : `${d.subtitle} (Coming soon)`"
               >
                 {{ d.name }}
               </button>
@@ -797,12 +871,30 @@ onUnmounted(() => {
   position: fixed;
   inset: 0;
   z-index: 999999;
-  background: #030407;
+  background: radial-gradient(ellipse at 50% 42%, #294c7a 0%, #172e4f 45%, #0c182c 80%, #070e1b 100%);
   color: #f1f3f8;
   opacity: 1;
   transition: opacity 0.85s ease;
   overflow: hidden;
   font-family: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+}
+
+.cosmic-blueprint-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(148, 197, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 197, 255, 0.06) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+
+.orbital-belt-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 #landing-hero.leaving {
@@ -907,53 +999,135 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 107, 53, 0.35);
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: clamp(10px, 1.2vw, 12px);
-  letter-spacing: 0.16em;
-  color: #f8fafc;
+  background: rgba(110, 231, 183, 0.2);
+  border: 1px solid rgba(167, 243, 208, 0.55);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: clamp(10px, 1.1vw, 11.5px);
+  letter-spacing: 0.14em;
+  color: #ecfdf5;
   backdrop-filter: blur(8px);
+  box-shadow: 0 0 18px rgba(52, 211, 153, 0.22);
 }
 
 .pulse-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ff6b35;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.28);
+  background: #34d399;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.32);
   animation: pulse-ring 2.4s ease-in-out infinite;
 }
 
 @keyframes pulse-ring {
   50% {
-    box-shadow: 0 0 0 7px rgba(255, 107, 53, 0);
+    box-shadow: 0 0 0 7px rgba(52, 211, 153, 0);
   }
 }
 
-/* Mid-Right Telemetry Card */
+/* Floating Team AstraMap Asteroid Nodes */
+.team-asteroids-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.asteroid-node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  animation: float-rock 6s ease-in-out infinite;
+}
+
+.asteroid-node:nth-child(even) {
+  animation-delay: -3s;
+}
+
+@keyframes float-rock {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+  50% { transform: translate(-50%, -50%) translateY(-4px); }
+}
+
+.asteroid-rock {
+  width: 30px;
+  height: 27px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55));
+  flex-shrink: 0;
+}
+
+.asteroid-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #f8fafc;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+}
+
+/* Jezero Crater Globe Pin */
+.jezero-globe-pin {
+  position: absolute;
+  left: 46%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.pin-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.pin-rings {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+}
+
+.pin-rings i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Mid-Right Light-Frosted Telemetry Card */
 .hud-telemetry-panel {
   position: absolute;
   right: 24px;
   top: 90px;
   width: 280px;
-  background: rgba(13, 20, 36, 0.78);
-  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(235, 242, 250, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 8px;
   padding: 12px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 .telem-header {
-  font-size: 10.5px;
-  letter-spacing: 0.18em;
-  color: var(--neo-cyan, #00d2ff);
-  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: #0f172a;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.14);
   padding-bottom: 6px;
   font-weight: 700;
 }
@@ -966,19 +1140,19 @@ onUnmounted(() => {
 }
 
 .telem-label {
-  color: #94a3b8;
-  letter-spacing: 0.1em;
+  color: #475569;
+  letter-spacing: 0.08em;
 }
 
 .telem-val {
-  color: #f1f5f9;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  color: #0f172a;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-align: right;
 }
 
 .telem-val.highlight {
-  color: #ff6b35;
+  color: #ea580c;
 }
 
 /* Bottom Bar */
@@ -998,6 +1172,11 @@ onUnmounted(() => {
 
 .bl-tag {
   color: #ff6b35;
+  font-weight: 700;
+}
+
+.bl-team {
+  color: #7dd3fc;
   font-weight: 700;
 }
 
@@ -1034,29 +1213,35 @@ onUnmounted(() => {
 }
 
 .dest-pill {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-  padding: 5px 11px;
-  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 5px;
+  padding: 5px 12px;
+  color: #e2e8f0;
   font-family: inherit;
   font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   cursor: pointer;
+  backdrop-filter: blur(6px);
   transition: all 0.2s ease;
 }
 
-.dest-pill:hover {
+.dest-pill:hover:not(:disabled) {
   border-color: #00d2ff;
   color: #00d2ff;
-  background: rgba(0, 210, 255, 0.12);
+  background: rgba(0, 210, 255, 0.15);
+}
+
+.dest-pill:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
 }
 
 .dest-pill.active {
-  border-color: #ff6b35;
+  border-color: #fb923c;
   color: #ffffff;
-  background: rgba(255, 107, 53, 0.25);
-  box-shadow: 0 0 12px rgba(255, 107, 53, 0.35);
+  background: linear-gradient(180deg, #f0733f 0%, #d94e1f 100%);
+  box-shadow: 0 0 16px rgba(240, 115, 63, 0.5);
   font-weight: 700;
 }
 
@@ -1077,14 +1262,14 @@ onUnmounted(() => {
   font-family: inherit;
   font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.22em;
   color: #ffffff;
-  background: rgba(255, 107, 53, 0.18);
-  border: 1.5px solid #ff6b35;
-  border-radius: 3px;
-  padding: 13px 32px;
+  background: linear-gradient(180deg, #f2743f 0%, #d84b1c 100%);
+  border: 1.5px solid #fb923c;
+  border-radius: 6px;
+  padding: 13px 34px;
   cursor: pointer;
-  box-shadow: 0 0 18px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 0 26px rgba(242, 116, 63, 0.6);
   transition: all 0.25s ease;
 }
 
@@ -1219,6 +1404,7 @@ onUnmounted(() => {
 }
 
 @media (max-width: 900px) {
+  .hud-team-panel,
   .hud-telemetry-panel {
     display: none;
   }
