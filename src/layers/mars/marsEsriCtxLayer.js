@@ -13,8 +13,12 @@ export function createMarsEsriCtxLayer({ viewer }) {
     numberOfLevelZeroTilesY: 1,
   });
 
+  const esriBase =
+    (typeof window !== 'undefined' && window.MARS_ESRI_BASE) ||
+    'https://astro.arcgis.com';
+
   const provider = new Cesium.UrlTemplateImageryProvider({
-    url: '/esri-mars/arcgis/rest/services/OnMars/CTX1/MapServer/tile/{z}/{y}/{x}',
+    url: `${esriBase}/arcgis/rest/services/OnMars/CTX1/MapServer/tile/{z}/{y}/{x}`,
     tilingScheme,
     tileWidth: 512,
     tileHeight: 512,

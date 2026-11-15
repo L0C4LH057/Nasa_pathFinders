@@ -13,8 +13,12 @@ export function createMarsEsriMdimLayer({ viewer }) {
     numberOfLevelZeroTilesY: 1,
   });
 
+  const esriBase =
+    (typeof window !== 'undefined' && window.MARS_ESRI_BASE) ||
+    'https://astro.arcgis.com';
+
   const provider = new Cesium.UrlTemplateImageryProvider({
-    url: '/esri-mars/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}',
+    url: `${esriBase}/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}`,
     tilingScheme,
     maximumLevel: 7,
     ellipsoid: MARS_ELLIPSOID,

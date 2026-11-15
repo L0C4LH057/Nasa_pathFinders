@@ -14,9 +14,13 @@ export function createMarsBasemapLayer({ viewer }) {
   });
 
   // Esri Explore Mars Viking MDIM 2.1 Photographic Natural Color Mosaic
-  // Proxied through /esri-mars to prevent CORS blocks and handle missing tiles
+  // Directly streams from astro.arcgis.com (with CORS), or via optional window.MARS_ESRI_BASE
+  const esriBase =
+    (typeof window !== 'undefined' && window.MARS_ESRI_BASE) ||
+    'https://astro.arcgis.com';
+
   const provider = new Cesium.UrlTemplateImageryProvider({
-    url: '/esri-mars/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}',
+    url: `${esriBase}/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}`,
     tilingScheme,
     tileWidth: 512,
     tileHeight: 512,

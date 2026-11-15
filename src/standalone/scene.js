@@ -3,7 +3,13 @@ import { createApplicationRequestServices } from '../services/requests.js';
 /** Supply standalone request services when directly constructing a scene. */
 export function createStandaloneScene(options) {
   return createApplicationScene({
-    requestServices: createApplicationRequestServices(),
+    requestServices: createApplicationRequestServices({
+      endpoints: {
+        summary: null,
+        regional: null,
+        weather: null,
+      },
+    }),
     ...options,
   });
 }

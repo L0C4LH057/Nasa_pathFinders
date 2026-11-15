@@ -366,6 +366,12 @@ export function createLibrarySource({
    * @returns {Promise<{ server: boolean, availability: Map<string, { available: boolean, reason: string|null }> }>}
    */
   async function getAvailability({ signal } = {}) {
+    if (!base) {
+      return {
+        server: false,
+        availability: staticLibraryAvailability(entries),
+      };
+    }
     try {
       const response = await fetchImpl(`${base}/catalog`, {
         signal,

@@ -311,3 +311,22 @@
   - [x] 23.3.2 Execute automated Puppeteer test verifying globe rendering, rotation, target pick, and transition to Mission Control
   - [x] 23.3.3 Capture screenshot artifacts of the enhanced Landing Page and transition
   - [x] 23.3.4 Document architecture in `tasks/lessons.md`
+
+## Phase 24: Fix Production aaPanel VPS Deployment — Direct Esri Streaming, Earth Bloat Neutralization & Nginx Config <!-- id: 24 -->
+
+- [x] 24.1 Direct Planetary Imagery Streaming (Universal Production Deployment) <!-- id: 24.1 -->
+  - [x] 24.1.1 Update `src/layers/mars/marsBasemapLayer.js` to stream directly from `https://astro.arcgis.com/arcgis/rest/services/OnMars/MDIM/MapServer/tile/{z}/{y}/{x}`
+  - [x] 24.1.2 Update `src/layers/mars/marsEsriCtxLayer.js` to stream directly from `https://astro.arcgis.com/arcgis/rest/services/OnMars/CTX1/MapServer/tile/{z}/{y}/{x}` with maxLevel 12
+  - [x] 24.1.3 Ensure `marsEsriMdimLayer.js` uses direct `https://astro.arcgis.com` URL
+- [x] 24.2 Neutralize Residual Earth Endpoints & Console Error Storm <!-- id: 24.2 -->
+  - [x] 24.2.1 Disable `initDetection` and `initTrackedReadout` in `src/ui/applicationShell.js` when in Mars mode
+  - [x] 24.2.2 Neutralize `/api/google/nearby-places`, `text-search`, and `reverse-geocode` in `src/search/http.js` and `src/voice/gevActions.js`
+  - [x] 24.2.3 Disable `/api/library/catalog` fetch in `src/app/tools.js`
+  - [x] 24.2.4 Silence `/api/openai/hud-summary/status` in `src/services/requests.js`
+  - [x] 24.2.5 Silence `/api/realtime/debug-log` in `src/voice/realtimeDiagnostics.js`
+- [x] 24.3 Production Verification & Clean Console Audit <!-- id: 24.3 -->
+  - [x] 24.3.1 Execute `npm run build` and verify bundle builds cleanly
+  - [x] 24.3.2 Execute automated Puppeteer verification on production build simulating standalone static deployment (zero 404s, zero `ERR_BLOCKED_BY_CLIENT`, full photographic CTX surface rendered)
+- [ ] 24.4 Git Push & aaPanel VPS Deployment Guide <!-- id: 24.4 -->
+  - [ ] 24.4.1 Commit all changes and push to `origin main`
+  - [ ] 24.4.2 Provide comprehensive aaPanel Nginx configuration instructions and deployment steps

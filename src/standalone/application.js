@@ -58,10 +58,8 @@ export function createStandaloneApplication({
       });
       const scene = await createStandaloneScene({
         ...context,
-        googleApiKey,
-        // Without a key, Google 3D can still load with tokens from the
-        // app's server when it offers them.
-        googleTokens: googleApiKey ? null : createGoogleTokenSource(),
+        googleApiKey: null,
+        googleTokens: null,
         cesiumToken,
         loaderStatus,
       });
